@@ -1,0 +1,17 @@
+# Neo4j Python Driver
+neo4j>=5.14.0
+
+# OpenAI SDK (compatible with OpenRouter)
+openai>=1.0.0
+
+# Environment variable management
+python-dotenv>=1.0.0
+
+# Data manipulation
+numpy>=1.24.0
+
+# JSON handling (built-in, but explicit for clarity)
+# json - built-in
+
+# Optional: For better CLI experience
+rich>=13.0.0
