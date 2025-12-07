@@ -50,10 +50,10 @@ venv.bak/
 .python-version
 
 # Data files (keep structure, ignore generated data)
-data/*.json
-data/*.csv
-data/*.parquet
-!data/.gitkeep
+#data/*.json
+#data/*.csv
+#data/*.parquet
+#!data/.gitkeep
 
 # Logs
 *.log

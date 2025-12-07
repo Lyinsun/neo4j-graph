@@ -1,0 +1,1032 @@
+{
+  "metadata": {
+    "version": "Flight0.4",
+    "description": "Neo4j Schema for Flight Operation and Airport Collaborative Decision Making (A-CDM)",
+    "source_document": "航班场景v0.4.pdf",
+    "created_at": "2025-12-08",
+    "modeling_layers": {
+      "FO": "Form Object - Abstract structure",
+      "O": "Ontology Object - Type definitions",
+      "E": "Entity Object - Real-world instances"
+    }
+  },
+
+  "schema": {
+    "version": "Flight0.4",
+
+    "node_types": [
+      {
+        "label": "Flight",
+        "description": "运行航班（执行层）- Operational flight in execution layer",
+        "base_type": "FlightBase",
+        "properties": {
+          "flightId": {
+            "type": "string",
+            "required": true,
+            "unique": true,
+            "description": "航班运行实例唯一ID"
+          },
+          "flightNumber": {
+            "type": "string",
+            "required": true,
+            "description": "航班号，如CA123"
+          },
+          "aircraftType": {
+            "type": "string",
+            "required": false,
+            "description": "飞机型号，如A320"
+          },
+          "status": {
+            "type": "enum",
+            "required": true,
+            "values": ["Created", "Planned", "Active", "Landed", "Canceled", "Closed"],
+            "description": "航班状态"
+          },
+          "origin": {
+            "type": "string",
+            "required": true,
+            "description": "计划起飞机场代码，如ZBAA"
+          },
+          "destination": {
+            "type": "string",
+            "required": true,
+            "description": "计划到达机场代码，如ZSPD"
+          },
+          "scheduleSource": {
+            "type": "string",
+            "required": false,
+            "description": "来源系统，如AODB, FOC"
+          },
+          "actualDepTime": {
+            "type": "datetime",
+            "required": false,
+            "description": "实际起飞时间 (ISO8601)"
+          },
+          "actualArrTime": {
+            "type": "datetime",
+            "required": false,
+            "description": "实际到达时间 (ISO8601)"
+          },
+          "version": {
+            "type": "string",
+            "required": true,
+            "default": "Flight0.4",
+            "description": "本体版本号"
+          }
+        },
+        "lifecycle_states": {
+          "initial": "Created",
+          "transitions": [
+            {"from": "Created", "to": "Planned", "event": "FlightPlanPublished"},
+            {"from": "Planned", "to": "Active", "event": "FlightDeparture"},
+            {"from": "Active", "to": "Landed", "event": "FlightArrival"},
+            {"from": "Landed", "to": "Closed", "event": "FlightClose"}
+          ]
+        }
+      },
+
+      {
+        "label": "FlightPlan",
+        "description": "航班计划（计划层）- Flight plan in planning layer",
+        "base_type": "FlightBase",
+        "properties": {
+          "planId": {
+            "type": "string",
+            "required": true,
+            "unique": true,
+            "description": "计划唯一ID"
+          },
+          "flightNumber": {
+            "type": "string",
+            "required": true,
+            "description": "航班号"
+          },
+          "STD": {
+            "type": "datetime",
+            "required": true,
+            "description": "计划起飞时间 (Scheduled Time of Departure)"
+          },
+          "STA": {
+            "type": "datetime",
+            "required": true,
+            "description": "计划到达时间 (Scheduled Time of Arrival)"
+          },
+          "planStatus": {
+            "type": "enum",
+            "required": true,
+            "values": ["Draft", "Published", "Updated", "Archived"],
+            "description": "计划状态"
+          },
+          "version": {
+            "type": "string",
+            "required": true,
+            "default": "Flight0.4"
+          }
+        }
+      },
+
+      {
+        "label": "Airport",
+        "description": "机场 - Airport asset",
+        "base_type": "Asset",
+        "properties": {
+          "airportCode": {
+            "type": "string",
+            "required": true,
+            "unique": true,
+            "description": "机场三字码，如ZBAA"
+          },
+          "name": {
+            "type": "string",
+            "required": true,
+            "description": "机场名称"
+          },
+          "timezone": {
+            "type": "string",
+            "required": false,
+            "description": "时区，如Asia/Shanghai"
+          },
+          "version": {
+            "type": "string",
+            "required": true,
+            "default": "Flight0.4"
+          }
+        }
+      },
+
+      {
+        "label": "Runway",
+        "description": "跑道 - Runway resource",
+        "base_type": "Asset",
+        "properties": {
+          "runwayId": {
+            "type": "string",
+            "required": true,
+            "unique": true,
+            "description": "跑道ID，如01L"
+          },
+          "category": {
+            "type": "enum",
+            "required": false,
+            "values": ["CAT_I", "CAT_II", "CAT_III"],
+            "description": "跑道类别"
+          },
+          "length": {
+            "type": "integer",
+            "required": false,
+            "description": "跑道长度（米）"
+          },
+          "version": {
+            "type": "string",
+            "required": true,
+            "default": "Flight0.4"
+          }
+        }
+      },
+
+      {
+        "label": "Gate",
+        "description": "登机口 - Gate resource",
+        "base_type": "Asset",
+        "properties": {
+          "gateId": {
+            "type": "string",
+            "required": true,
+            "unique": true,
+            "description": "登机口ID，如T3-52"
+          },
+          "gateType": {
+            "type": "enum",
+            "required": false,
+            "values": ["Contact", "Remote"],
+            "description": "登机口类型：廊桥或远机位"
+          },
+          "status": {
+            "type": "enum",
+            "required": false,
+            "values": ["Available", "Occupied", "Maintenance"],
+            "description": "登机口状态"
+          },
+          "version": {
+            "type": "string",
+            "required": true,
+            "default": "Flight0.4"
+          }
+        }
+      },
+
+      {
+        "label": "ParkingStand",
+        "description": "机位 - Parking stand resource",
+        "base_type": "Asset",
+        "properties": {
+          "standId": {
+            "type": "string",
+            "required": true,
+            "unique": true,
+            "description": "机位ID"
+          },
+          "standCategory": {
+            "type": "string",
+            "required": false,
+            "description": "适用机型范围，如A320/A321/B738"
+          },
+          "version": {
+            "type": "string",
+            "required": true,
+            "default": "Flight0.4"
+          }
+        }
+      },
+
+      {
+        "label": "Aircraft",
+        "description": "飞机 - Aircraft asset",
+        "base_type": "Asset",
+        "properties": {
+          "aircraftId": {
+            "type": "string",
+            "required": true,
+            "unique": true,
+            "description": "飞机注册号"
+          },
+          "aircraftType": {
+            "type": "string",
+            "required": true,
+            "description": "飞机型号，如A320"
+          },
+          "version": {
+            "type": "string",
+            "required": true,
+            "default": "Flight0.4"
+          }
+        }
+      },
+
+      {
+        "label": "Tower",
+        "description": "塔台 - Tower actor",
+        "base_type": "Actor",
+        "properties": {
+          "towerId": {
+            "type": "string",
+            "required": true,
+            "unique": true,
+            "description": "塔台ID"
+          },
+          "region": {
+            "type": "string",
+            "required": false,
+            "description": "管辖区域，如Terminal 1"
+          },
+          "version": {
+            "type": "string",
+            "required": true,
+            "default": "Flight0.4"
+          }
+        }
+      },
+
+      {
+        "label": "ATCUnit",
+        "description": "管制单元 - Air Traffic Control Unit",
+        "base_type": "Actor",
+        "properties": {
+          "unitId": {
+            "type": "string",
+            "required": true,
+            "unique": true,
+            "description": "管制单元ID"
+          },
+          "controlArea": {
+            "type": "string",
+            "required": false,
+            "description": "管制区域，如Departure, Arrival"
+          },
+          "version": {
+            "type": "string",
+            "required": true,
+            "default": "Flight0.4"
+          }
+        }
+      },
+
+      {
+        "label": "ExternalSystem",
+        "description": "外部系统 - External system actor",
+        "base_type": "Actor",
+        "properties": {
+          "systemId": {
+            "type": "string",
+            "required": true,
+            "unique": true,
+            "description": "系统ID"
+          },
+          "systemType": {
+            "type": "string",
+            "required": false,
+            "description": "系统类型，如AODB, FOC, MRO"
+          },
+          "version": {
+            "type": "string",
+            "required": true,
+            "default": "Flight0.4"
+          }
+        }
+      },
+
+      {
+        "label": "Event",
+        "description": "事件基类 - Base event class",
+        "properties": {
+          "eventId": {
+            "type": "string",
+            "required": true,
+            "unique": true,
+            "description": "事件唯一ID"
+          },
+          "eventType": {
+            "type": "string",
+            "required": true,
+            "description": "事件类型，如FlightDelayed, FlightPlanChanged"
+          },
+          "eventTime": {
+            "type": "datetime",
+            "required": true,
+            "description": "事件发生时间 (ISO8601)"
+          },
+          "severity": {
+            "type": "enum",
+            "required": true,
+            "values": ["Info", "Warning", "Critical"],
+            "description": "严重程度"
+          },
+          "sourceSystem": {
+            "type": "string",
+            "required": false,
+            "description": "来源系统"
+          },
+          "eventStatus": {
+            "type": "enum",
+            "required": false,
+            "values": ["New", "Processing", "Closed", "Archived"],
+            "description": "事件处理状态"
+          },
+          "version": {
+            "type": "string",
+            "required": true,
+            "default": "Flight0.4"
+          }
+        },
+        "subtypes": ["FlightDelayedEvent", "FlightPlanChangedEvent", "ResourceConflictEvent"]
+      },
+
+      {
+        "label": "FlightDelayedEvent",
+        "description": "航班延误事件 - Flight delayed event",
+        "extends": "Event",
+        "properties": {
+          "delayMinutes": {
+            "type": "integer",
+            "required": true,
+            "description": "延误分钟数"
+          },
+          "delayPhase": {
+            "type": "enum",
+            "required": false,
+            "values": ["DEP", "ARR", "TURNAROUND"],
+            "description": "延误阶段"
+          },
+          "reasonCode": {
+            "type": "string",
+            "required": false,
+            "description": "延误原因代码，如WX（天气）"
+          }
+        }
+      },
+
+      {
+        "label": "FlightPlanChangedEvent",
+        "description": "航班计划变更事件 - Flight plan changed event",
+        "extends": "Event",
+        "properties": {
+          "oldSTD": {
+            "type": "datetime",
+            "required": false,
+            "description": "原计划起飞时间"
+          },
+          "newSTD": {
+            "type": "datetime",
+            "required": false,
+            "description": "新计划起飞时间"
+          },
+          "changeReason": {
+            "type": "string",
+            "required": false,
+            "description": "变更原因"
+          }
+        }
+      },
+
+      {
+        "label": "ResourceConflictEvent",
+        "description": "资源冲突事件 - Resource conflict event",
+        "extends": "Event",
+        "properties": {
+          "resourceType": {
+            "type": "string",
+            "required": true,
+            "description": "资源类型，如Gate, Runway"
+          },
+          "conflictDescription": {
+            "type": "string",
+            "required": false,
+            "description": "冲突描述"
+          }
+        }
+      }
+    ],
+
+    "relationship_types": [
+      {
+        "type": "USES",
+        "description": "航班使用资源 - Flight uses resource (静态关系 - LINK TYPE)",
+        "from": "Flight",
+        "to": ["Gate", "Runway"],
+        "properties": {
+          "startTime": {
+            "type": "datetime",
+            "required": false,
+            "description": "开始使用时间"
+          },
+          "endTime": {
+            "type": "datetime",
+            "required": false,
+            "description": "结束使用时间"
+          },
+          "version": {
+            "type": "string",
+            "required": true,
+            "default": "Flight0.4"
+          }
+        },
+        "cardinality": "1:1",
+        "constraints": ["同一时间段内，Gate不得被两个航班同时占用"]
+      },
+
+      {
+        "type": "PARKED_AT",
+        "description": "航班停靠在机位 - Flight parked at stand",
+        "from": "Flight",
+        "to": "ParkingStand",
+        "properties": {
+          "version": {
+            "type": "string",
+            "required": true,
+            "default": "Flight0.4"
+          }
+        },
+        "cardinality": "1:1",
+        "constraints": ["机位类型必须支持对应飞机型号"]
+      },
+
+      {
+        "type": "ASSIGNED_TO",
+        "description": "飞机分配给航班 - Aircraft assigned to flight",
+        "from": "Aircraft",
+        "to": "Flight",
+        "properties": {
+          "version": {
+            "type": "string",
+            "required": true,
+            "default": "Flight0.4"
+          }
+        },
+        "cardinality": "1:N",
+        "constraints": [
+          "同一时刻一架飞机只能执行一个航班",
+          "后续航班起飞时间 >= 前序航班到达时间 + 最小过站时间"
+        ]
+      },
+
+      {
+        "type": "MANAGES",
+        "description": "机场管理资源 - Airport manages resources",
+        "from": "Airport",
+        "to": ["Runway", "Gate", "ParkingStand"],
+        "properties": {
+          "version": {
+            "type": "string",
+            "required": true,
+            "default": "Flight0.4"
+          }
+        },
+        "cardinality": "1:N"
+      },
+
+      {
+        "type": "CONTROLS",
+        "description": "塔台控制资源 - Tower controls resources",
+        "from": "Tower",
+        "to": "Runway",
+        "properties": {
+          "version": {
+            "type": "string",
+            "required": true,
+            "default": "Flight0.4"
+          }
+        },
+        "cardinality": "1:N"
+      },
+
+      {
+        "type": "IMPACTS",
+        "description": "事件影响实体 - Event impacts entity (静态关系 - LINK TYPE)",
+        "from": "Event",
+        "to": ["Flight", "Gate", "Runway", "ParkingStand"],
+        "properties": {
+          "impactLevel": {
+            "type": "enum",
+            "required": false,
+            "values": ["Minor", "Major", "Critical"],
+            "description": "影响程度"
+          },
+          "version": {
+            "type": "string",
+            "required": true,
+            "default": "Flight0.4"
+          }
+        },
+        "cardinality": "N:1",
+        "constraints": ["每个事件必须绑定唯一作用对象"]
+      },
+
+      {
+        "type": "TRIGGERS",
+        "description": "事件触发动作 - Event triggers action (动态关系 - ACTION TYPE)",
+        "from": "Event",
+        "to": "Flight",
+        "properties": {
+          "actionType": {
+            "type": "string",
+            "required": true,
+            "description": "动作类型，如NotifyTower, ReassignGate"
+          },
+          "triggerTime": {
+            "type": "datetime",
+            "required": false,
+            "description": "触发时间"
+          },
+          "version": {
+            "type": "string",
+            "required": true,
+            "default": "Flight0.4"
+          }
+        }
+      },
+
+      {
+        "type": "DERIVED_FROM",
+        "description": "航班派生自计划 - Flight derived from plan",
+        "from": "Flight",
+        "to": "FlightPlan",
+        "properties": {
+          "version": {
+            "type": "string",
+            "required": true,
+            "default": "Flight0.4"
+          }
+        },
+        "cardinality": "1:1"
+      }
+    ],
+
+    "constraints": [
+      {
+        "type": "UNIQUE",
+        "label": "Flight",
+        "property": "flightId",
+        "name": "flight_id_unique"
+      },
+      {
+        "type": "UNIQUE",
+        "label": "FlightPlan",
+        "property": "planId",
+        "name": "flight_plan_id_unique"
+      },
+      {
+        "type": "UNIQUE",
+        "label": "Airport",
+        "property": "airportCode",
+        "name": "airport_code_unique"
+      },
+      {
+        "type": "UNIQUE",
+        "label": "Runway",
+        "property": "runwayId",
+        "name": "runway_id_unique"
+      },
+      {
+        "type": "UNIQUE",
+        "label": "Gate",
+        "property": "gateId",
+        "name": "gate_id_unique"
+      },
+      {
+        "type": "UNIQUE",
+        "label": "ParkingStand",
+        "property": "standId",
+        "name": "stand_id_unique"
+      },
+      {
+        "type": "UNIQUE",
+        "label": "Aircraft",
+        "property": "aircraftId",
+        "name": "aircraft_id_unique"
+      },
+      {
+        "type": "UNIQUE",
+        "label": "Tower",
+        "property": "towerId",
+        "name": "tower_id_unique"
+      },
+      {
+        "type": "UNIQUE",
+        "label": "ATCUnit",
+        "property": "unitId",
+        "name": "atc_unit_id_unique"
+      },
+      {
+        "type": "UNIQUE",
+        "label": "Event",
+        "property": "eventId",
+        "name": "event_id_unique"
+      }
+    ],
+
+    "indexes": [
+      {
+        "type": "BTREE",
+        "label": "Flight",
+        "property": "status",
+        "name": "flight_status_index"
+      },
+      {
+        "type": "BTREE",
+        "label": "Flight",
+        "property": "flightNumber",
+        "name": "flight_number_index"
+      },
+      {
+        "type": "BTREE",
+        "label": "Event",
+        "property": "eventType",
+        "name": "event_type_index"
+      },
+      {
+        "type": "BTREE",
+        "label": "Event",
+        "property": "eventTime",
+        "name": "event_time_index"
+      }
+    ]
+  },
+
+  "sample_data": {
+    "description": "完整的延误事件场景示例 - 基于文档第9章: 航班延误→通知塔台→再分配Gate→更新状态",
+    "scenario": "CA123航班延误50分钟，从登机口T3-52重分配到T3-66",
+
+    "nodes": [
+      {
+        "label": "Airport",
+        "properties": {
+          "airportCode": "ZBAA",
+          "name": "北京首都国际机场",
+          "timezone": "Asia/Shanghai",
+          "version": "Flight0.4"
+        }
+      },
+
+      {
+        "label": "FlightPlan",
+        "properties": {
+          "planId": "FP-CA123-20240208",
+          "flightNumber": "CA123",
+          "STD": "2024-02-08T09:00:00",
+          "STA": "2024-02-08T11:10:00",
+          "planStatus": "Published",
+          "version": "Flight0.4"
+        }
+      },
+
+      {
+        "label": "Flight",
+        "properties": {
+          "flightId": "CA123-20240208",
+          "flightNumber": "CA123",
+          "aircraftType": "A320",
+          "status": "Delayed",
+          "origin": "ZBAA",
+          "destination": "ZSPD",
+          "scheduleSource": "AODB",
+          "actualDepTime": null,
+          "actualArrTime": null,
+          "version": "Flight0.4"
+        }
+      },
+
+      {
+        "label": "Gate",
+        "properties": {
+          "gateId": "T3-52",
+          "gateType": "Contact",
+          "status": "Available",
+          "version": "Flight0.4"
+        }
+      },
+
+      {
+        "label": "Gate",
+        "properties": {
+          "gateId": "T3-66",
+          "gateType": "Contact",
+          "status": "Occupied",
+          "version": "Flight0.4"
+        }
+      },
+
+      {
+        "label": "Runway",
+        "properties": {
+          "runwayId": "01L",
+          "category": "CAT_III",
+          "length": 3800,
+          "version": "Flight0.4"
+        }
+      },
+
+      {
+        "label": "ParkingStand",
+        "properties": {
+          "standId": "245",
+          "standCategory": "A320/A321/B738",
+          "version": "Flight0.4"
+        }
+      },
+
+      {
+        "label": "Aircraft",
+        "properties": {
+          "aircraftId": "B-1234",
+          "aircraftType": "A320",
+          "version": "Flight0.4"
+        }
+      },
+
+      {
+        "label": "Tower",
+        "properties": {
+          "towerId": "ZBAA-T3",
+          "region": "Terminal 3",
+          "version": "Flight0.4"
+        }
+      },
+
+      {
+        "label": "ATCUnit",
+        "properties": {
+          "unitId": "ATC-DEP",
+          "controlArea": "Departure",
+          "version": "Flight0.4"
+        }
+      },
+
+      {
+        "label": "ExternalSystem",
+        "properties": {
+          "systemId": "AODB",
+          "systemType": "Airport Operations Database",
+          "version": "Flight0.4"
+        }
+      },
+
+      {
+        "label": ["Event", "FlightDelayedEvent"],
+        "properties": {
+          "eventId": "EVT-CA123-001",
+          "eventType": "FlightDelayed",
+          "eventTime": "2024-02-08T09:30:00",
+          "severity": "Warning",
+          "sourceSystem": "AODB",
+          "eventStatus": "Closed",
+          "delayMinutes": 50,
+          "delayPhase": "DEP",
+          "reasonCode": "WX",
+          "version": "Flight0.4"
+        }
+      }
+    ],
+
+    "relationships": [
+      {
+        "type": "MANAGES",
+        "from": {"label": "Airport", "airportCode": "ZBAA"},
+        "to": {"label": "Gate", "gateId": "T3-52"},
+        "properties": {
+          "version": "Flight0.4"
+        }
+      },
+      {
+        "type": "MANAGES",
+        "from": {"label": "Airport", "airportCode": "ZBAA"},
+        "to": {"label": "Gate", "gateId": "T3-66"},
+        "properties": {
+          "version": "Flight0.4"
+        }
+      },
+      {
+        "type": "MANAGES",
+        "from": {"label": "Airport", "airportCode": "ZBAA"},
+        "to": {"label": "Runway", "runwayId": "01L"},
+        "properties": {
+          "version": "Flight0.4"
+        }
+      },
+      {
+        "type": "MANAGES",
+        "from": {"label": "Airport", "airportCode": "ZBAA"},
+        "to": {"label": "ParkingStand", "standId": "245"},
+        "properties": {
+          "version": "Flight0.4"
+        }
+      },
+
+      {
+        "type": "CONTROLS",
+        "from": {"label": "Tower", "towerId": "ZBAA-T3"},
+        "to": {"label": "Runway", "runwayId": "01L"},
+        "properties": {
+          "version": "Flight0.4"
+        }
+      },
+
+      {
+        "type": "DERIVED_FROM",
+        "from": {"label": "Flight", "flightId": "CA123-20240208"},
+        "to": {"label": "FlightPlan", "planId": "FP-CA123-20240208"},
+        "properties": {
+          "version": "Flight0.4"
+        }
+      },
+
+      {
+        "type": "ASSIGNED_TO",
+        "from": {"label": "Aircraft", "aircraftId": "B-1234"},
+        "to": {"label": "Flight", "flightId": "CA123-20240208"},
+        "properties": {
+          "version": "Flight0.4"
+        }
+      },
+
+      {
+        "type": "USES",
+        "from": {"label": "Flight", "flightId": "CA123-20240208"},
+        "to": {"label": "Gate", "gateId": "T3-66"},
+        "properties": {
+          "startTime": "2024-02-08T08:00:00",
+          "endTime": "2024-02-08T10:00:00",
+          "version": "Flight0.4"
+        },
+        "comment": "航班重分配后使用T3-66登机口"
+      },
+
+      {
+        "type": "PARKED_AT",
+        "from": {"label": "Flight", "flightId": "CA123-20240208"},
+        "to": {"label": "ParkingStand", "standId": "245"},
+        "properties": {
+          "version": "Flight0.4"
+        }
+      },
+
+      {
+        "type": "IMPACTS",
+        "from": {"label": "Event", "eventId": "EVT-CA123-001"},
+        "to": {"label": "Flight", "flightId": "CA123-20240208"},
+        "properties": {
+          "impactLevel": "Major",
+          "version": "Flight0.4"
+        }
+      },
+
+      {
+        "type": "TRIGGERS",
+        "from": {"label": "Event", "eventId": "EVT-CA123-001"},
+        "to": {"label": "Flight", "flightId": "CA123-20240208"},
+        "properties": {
+          "actionType": "NotifyTower",
+          "triggerTime": "2024-02-08T09:30:00",
+          "version": "Flight0.4"
+        },
+        "comment": "延误事件触发通知塔台动作"
+      },
+
+      {
+        "type": "TRIGGERS",
+        "from": {"label": "Event", "eventId": "EVT-CA123-001"},
+        "to": {"label": "Flight", "flightId": "CA123-20240208"},
+        "properties": {
+          "actionType": "ReassignGate",
+          "triggerTime": "2024-02-08T09:31:00",
+          "version": "Flight0.4"
+        },
+        "comment": "延误事件触发Gate重分配动作"
+      }
+    ]
+  },
+
+  "business_rules": {
+    "state_machine": {
+      "Flight": {
+        "states": ["Created", "Planned", "Active", "Landed", "Canceled", "Closed"],
+        "transitions": [
+          {
+            "from": "Planned",
+            "to": "Active",
+            "event": "FlightDeparture",
+            "constraint": "必须分配跑道和飞机"
+          },
+          {
+            "from": "Active",
+            "to": "Landed",
+            "event": "FlightArrival",
+            "constraint": "必须记录实际到达时间"
+          }
+        ]
+      },
+      "Event": {
+        "states": ["New", "Processing", "Closed", "Archived"],
+        "transitions": [
+          {
+            "from": "New",
+            "to": "Processing",
+            "description": "系统开始执行动作链路"
+          },
+          {
+            "from": "Processing",
+            "to": "Closed",
+            "description": "动作链路已全部执行完毕"
+          }
+        ]
+      }
+    },
+
+    "constraints": {
+      "Gate冲突约束": "同一时间段内，Gate不得被两个航班同时占用",
+      "Turnaround约束": "后续航班起飞时间 >= 前序航班落地时间 + 最小过站时间",
+      "Runway占用约束": "连续两架飞机使用跑道之间必须满足最小安全间隔",
+      "Aircraft排班约束": "同一时刻一架飞机只能执行一个航班",
+      "状态机约束": "航班状态必须按定义的生命周期路径迁移"
+    },
+
+    "event_action_mapping": {
+      "FlightDelayedEvent": [
+        "NotifyTowerAction - 通知塔台",
+        "CheckGateConflictAction - 检查Gate冲突",
+        "ReassignGateAction - 重新分配Gate（如有冲突）",
+        "UpdateFlightStatusAction - 更新航班状态为Delayed"
+      ],
+      "FlightPlanChangedEvent": [
+        "UpdateFlightPlanAction - 更新计划对象",
+        "ReassignResourceAction - 重新分配资源"
+      ],
+      "ResourceConflictEvent": [
+        "AlertConflictAction - 发送冲突告警",
+        "ResolveConflictAction - 启动冲突解决流程"
+      ]
+    }
+  },
+
+  "query_examples": {
+    "find_delayed_flights": {
+      "description": "查找所有延误的航班",
+      "cypher": "MATCH (f:Flight) WHERE f.status = 'Delayed' AND f.version = 'Flight0.4' RETURN f"
+    },
+    "find_flight_events": {
+      "description": "查找某航班的所有事件",
+      "cypher": "MATCH (e:Event)-[:IMPACTS]->(f:Flight {flightId: 'CA123-20240208'}) WHERE e.version = 'Flight0.4' RETURN e ORDER BY e.eventTime"
+    },
+    "find_gate_usage": {
+      "description": "查找登机口的使用情况",
+      "cypher": "MATCH (f:Flight)-[r:USES]->(g:Gate) WHERE g.version = 'Flight0.4' RETURN f.flightNumber, g.gateId, r.startTime, r.endTime"
+    },
+    "find_airport_resources": {
+      "description": "查找机场管理的所有资源",
+      "cypher": "MATCH (a:Airport {airportCode: 'ZBAA'})-[:MANAGES]->(r) WHERE a.version = 'Flight0.4' RETURN labels(r) AS resourceType, r"
+    },
+    "event_action_chain": {
+      "description": "追踪事件触发的动作链",
+      "cypher": "MATCH (e:Event {eventId: 'EVT-CA123-001'})-[t:TRIGGERS]->(f:Flight) WHERE e.version = 'Flight0.4' RETURN e.eventType, t.actionType, t.triggerTime, f.flightId ORDER BY t.triggerTime"
+    }
+  }
+}

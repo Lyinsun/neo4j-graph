@@ -1,0 +1,1410 @@
+{
+  "departments": [
+    {
+      "dept_id": "TECH",
+      "dept_name": "技术部",
+      "dept_type": "Tech",
+      "lead_reviewer": "张工"
+    },
+    {
+      "dept_id": "FIN",
+      "dept_name": "财务部",
+      "dept_type": "Finance",
+      "lead_reviewer": "李会计"
+    },
+    {
+      "dept_id": "HR",
+      "dept_name": "人力资源部",
+      "dept_type": "HR",
+      "lead_reviewer": "王主管"
+    },
+    {
+      "dept_id": "COMP",
+      "dept_name": "合规部",
+      "dept_type": "Compliance",
+      "lead_reviewer": "赵律师"
+    },
+    {
+      "dept_id": "SEC",
+      "dept_name": "安全部",
+      "dept_type": "Security",
+      "lead_reviewer": "刘安全"
+    }
+  ],
+  "prds": [
+    {
+      "prd_id": "PRD_001",
+      "title": "移动应用用户行为分析系统开发",
+      "description": "开发一个全面的移动应用用户行为分析系统，用于追踪用户在应用内的操作路径、停留时间、点击热区等行为数据。系统需要支持实时数据采集、大数据存储、可视化报表生成，并能够进行用户画像分析和个性化推荐。预计需要3个月开发周期，涉及前端、后端、数据分析团队共15人。",
+      "status": "NeedsRevision",
+      "created_at": "2025-09-13T00:40:39.477599",
+      "updated_at": "2025-10-07T00:40:39.477599",
+      "submitter": "项目经理C",
+      "priority": "High",
+      "target_launch_date": "2025-12-12T00:40:39.477599"
+    },
+    {
+      "prd_id": "PRD_002",
+      "title": "电商平台性能优化",
+      "description": "电商平台在促销活动期间频繁出现性能瓶颈，需要进行全面性能优化。包括数据库查询优化、缓存策略优化、CDN配置优化、前端资源优化等。目标是支持10倍并发量，确保大促期间系统稳定。需要进行压力测试验证。",
+      "status": "Approved",
+      "created_at": "2025-10-19T00:40:39.477599",
+      "updated_at": "2025-11-16T00:40:39.477599",
+      "submitter": "产品经理B",
+      "priority": "High",
+      "target_launch_date": "2025-12-03T00:40:39.477599"
+    },
+    {
+      "prd_id": "PRD_003",
+      "title": "企业知识管理平台建设",
+      "description": "建设企业知识管理平台，实现知识的沉淀、分享、检索、协作。支持文档管理、Wiki、问答社区、专家库等功能。引入智能推荐和语义搜索技术，提升知识利用效率。目标是将知识查找时间减少50%，促进组织学习。",
+      "status": "Rejected",
+      "created_at": "2025-07-25T00:40:39.477599",
+      "updated_at": "2025-08-21T00:40:39.477599",
+      "submitter": "业务负责人D",
+      "priority": "Low",
+      "target_launch_date": "2026-01-21T00:40:39.477599"
+    },
+    {
+      "prd_id": "PRD_004",
+      "title": "员工技能培训平台",
+      "description": "开发在线员工技能培训平台，支持课程管理、在线学习、考试认证、学习路径规划等功能。引入微课、直播、互动练习等多种学习形式。与人力系统集成，将培训记录纳入绩效考核。目标是提升员工技能水平，降低培训成本。",
+      "status": "Rejected",
+      "created_at": "2025-09-24T00:40:39.477599",
+      "updated_at": "2025-10-11T00:40:39.477599",
+      "submitter": "产品经理A",
+      "priority": "Low",
+      "target_launch_date": "2026-01-22T00:40:39.477599"
+    },
+    {
+      "prd_id": "PRD_005",
+      "title": "区块链溯源系统开发",
+      "description": "基于区块链技术开发产品溯源系统，记录产品从生产到销售的全流程信息。支持防伪验证、质量追溯、召回管理。采用联盟链架构，需要与上下游合作伙伴建立联盟。技术相对新颖，存在一定实施风险。",
+      "status": "InReview",
+      "created_at": "2025-06-24T00:40:39.477599",
+      "updated_at": "2025-07-23T00:40:39.477599",
+      "submitter": "业务负责人D",
+      "priority": "Low",
+      "target_launch_date": "2026-02-19T00:40:39.477599"
+    },
+    {
+      "prd_id": "PRD_006",
+      "title": "数据安全分级分类项目",
+      "description": "根据数据安全法要求，对企业数据进行分级分类管理。识别敏感数据、制定保护策略、实施访问控制、建立审计机制。涉及数据梳理、标签化、权限重构等大量工作。需要安全、合规、IT、业务部门联合推进。",
+      "status": "Rejected",
+      "created_at": "2025-09-21T00:40:39.477599",
+      "updated_at": "2025-10-20T00:40:39.477599",
+      "submitter": "产品经理B",
+      "priority": "High",
+      "target_launch_date": "2026-02-18T00:40:39.477599"
+    },
+    {
+      "prd_id": "PRD_007",
+      "title": "数据仓库建设项目",
+      "description": "构建企业级数据仓库，整合来自ERP、CRM、电商平台等多个业务系统的数据。采用维度建模方法，建立统一的数据模型和指标体系。支持BI分析、数据挖掘、机器学习应用。预计存储PB级数据，需要高性能计算和存储资源。",
+      "status": "NeedsRevision",
+      "created_at": "2025-08-31T00:40:39.477599",
+      "updated_at": "2025-09-01T00:40:39.477599",
+      "submitter": "产品经理A",
+      "priority": "Medium",
+      "target_launch_date": "2026-02-27T00:40:39.477599"
+    },
+    {
+      "prd_id": "PRD_008",
+      "title": "客户服务智能问答系统",
+      "description": "基于大语言模型开发智能客服问答系统，替代部分人工客服工作。系统需要对接现有知识库，支持多轮对话、意图识别、情感分析。预计可减少40%的人工客服工作量，提升客户满意度。需要持续优化模型和知识库，涉及AI团队、客服部门协作。",
+      "status": "Approved",
+      "created_at": "2025-06-16T00:40:39.477599",
+      "updated_at": "2025-07-08T00:40:39.477599",
+      "submitter": "产品经理A",
+      "priority": "High",
+      "target_launch_date": "2025-11-13T00:40:39.477599"
+    },
+    {
+      "prd_id": "PRD_009",
+      "title": "灾难恢复体系建设",
+      "description": "建立完善的灾难恢复体系，确保业务连续性。包括异地数据中心建设、数据实时备份、应急切换演练、灾难恢复预案等。目标RTO(恢复时间目标)4小时，RPO(恢复点目标)1小时。需要大量基础设施投入，预算500万元。",
+      "status": "Rejected",
+      "created_at": "2025-08-22T00:40:39.477599",
+      "updated_at": "2025-08-24T00:40:39.477599",
+      "submitter": "项目经理C",
+      "priority": "High",
+      "target_launch_date": "2026-04-19T00:40:39.477599"
+    },
+    {
+      "prd_id": "PRD_010",
+      "title": "RPA流程自动化项目",
+      "description": "引入RPA(机器人流程自动化)技术,自动化处理财务报销、数据录入、报表生成等重复性工作。预计可替代5个FTE的人力工作量，提升工作效率和准确性。需要选型RPA工具、流程分析、机器人开发、员工培训等环节。",
+      "status": "NeedsRevision",
+      "created_at": "2025-10-03T00:40:39.477599",
+      "updated_at": "2025-10-18T00:40:39.477599",
+      "submitter": "项目经理C",
+      "priority": "Medium",
+      "target_launch_date": "2026-01-01T00:40:39.477599"
+    },
+    {
+      "prd_id": "PRD_011",
+      "title": "多语言国际化改造",
+      "description": "为支持海外市场拓展，需对产品进行多语言国际化改造。支持英语、日语、韩语、西班牙语等主流语言。涉及界面翻译、时区处理、货币转换、本地化测试等工作。需要建立翻译管理流程，预计6个月完成。",
+      "status": "Rejected",
+      "created_at": "2025-06-17T00:40:39.477599",
+      "updated_at": "2025-07-08T00:40:39.477599",
+      "submitter": "产品经理A",
+      "priority": "Medium",
+      "target_launch_date": "2025-12-14T00:40:39.477599"
+    },
+    {
+      "prd_id": "PRD_012",
+      "title": "微服务架构改造",
+      "description": "将现有单体应用拆分为微服务架构，提升系统可扩展性和稳定性。采用Spring Cloud技术栈，引入服务注册发现、配置中心、API网关、链路追踪等组件。需要逐步迁移，避免影响现有业务，预计12个月完成全部改造。技术风险较高，需要充分的POC验证。",
+      "status": "Draft",
+      "created_at": "2025-06-08T00:40:39.477599",
+      "updated_at": "2025-06-28T00:40:39.477599",
+      "submitter": "业务负责人D",
+      "priority": "High",
+      "target_launch_date": "2026-06-08T00:40:39.477599"
+    },
+    {
+      "prd_id": "PRD_013",
+      "title": "移动办公平台开发",
+      "description": "开发企业移动办公平台，支持审批流程、公告通知、即时通讯、日程管理、移动考勤等功能。支持iOS和Android双平台，需要与现有OA系统集成。采用Flutter跨平台开发框架，预计3个月完成MVP版本。",
+      "status": "NeedsRevision",
+      "created_at": "2025-10-19T00:40:39.477599",
+      "updated_at": "2025-11-01T00:40:39.477599",
+      "submitter": "业务负责人D",
+      "priority": "Medium",
+      "target_launch_date": "2026-01-17T00:40:39.477599"
+    },
+    {
+      "prd_id": "PRD_014",
+      "title": "GDPR数据隐私合规改造项目",
+      "description": "为满足欧盟GDPR法规要求，需对现有系统进行全面数据隐私合规改造。包括用户数据加密、隐私政策更新、数据访问权限管理、数据删除机制、跨境数据传输合规性审查等。涉及法律、技术、运营多个部门协作，需要外部法律顾问支持，预计6个月完成。",
+      "status": "NeedsRevision",
+      "created_at": "2025-09-09T00:40:39.477599",
+      "updated_at": "2025-10-04T00:40:39.477599",
+      "submitter": "业务负责人D",
+      "priority": "High",
+      "target_launch_date": "2026-03-08T00:40:39.477599"
+    },
+    {
+      "prd_id": "PRD_015",
+      "title": "云服务成本优化方案",
+      "description": "当前云服务月度开支达50万元，需要进行全面成本优化。方案包括：闲置资源清理、服务器规格右调整、存储分层优化、CDN流量优化、预留实例购买等。目标是在不影响性能的前提下，将月度成本降低30%，预计节省15万元/月。",
+      "status": "InReview",
+      "created_at": "2025-07-15T00:40:39.477599",
+      "updated_at": "2025-07-22T00:40:39.477599",
+      "submitter": "项目经理C",
+      "priority": "Medium",
+      "target_launch_date": "2025-09-13T00:40:39.477599"
+    }
+  ],
+  "review_comments": [
+    {
+      "comment_id": "PRD_001_REVIEW_TECH",
+      "department": "Tech",
+      "dept_id": "TECH",
+      "reviewer_name": "张工",
+      "content": "技术方案可行，建议采用微服务架构以提升可扩展性。需要进行POC验证关键技术点。",
+      "risk_level": "Medium",
+      "recommendation": "NeedsModification",
+      "feedback_type": "Tech",
+      "created_at": "2025-09-17T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_001_REVIEW_FIN",
+      "department": "Finance",
+      "dept_id": "FIN",
+      "reviewer_name": "李会计",
+      "content": "预算超出年度计划50%，建议分阶段实施以分散财务压力。",
+      "risk_level": "High",
+      "recommendation": "NeedsModification",
+      "feedback_type": "Finance",
+      "created_at": "2025-09-16T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_001_REVIEW_HR",
+      "department": "HR",
+      "dept_id": "HR",
+      "reviewer_name": "王主管",
+      "content": "关键岗位人员流失风险高，建议增加激励措施或外包部分工作。",
+      "risk_level": "Medium",
+      "recommendation": "NeedsModification",
+      "feedback_type": "HR",
+      "created_at": "2025-09-17T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_001_REVIEW_COMP",
+      "department": "Compliance",
+      "dept_id": "COMP",
+      "reviewer_name": "赵律师",
+      "content": "合规审查通过，建议在实施过程中持续关注法规变化。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "Compliance",
+      "created_at": "2025-09-16T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_001_REVIEW_SEC",
+      "department": "Security",
+      "dept_id": "SEC",
+      "reviewer_name": "刘安全",
+      "content": "安全方案完善，符合安全规范，支持项目实施。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "Security",
+      "created_at": "2025-09-16T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_002_REVIEW_TECH",
+      "department": "Tech",
+      "dept_id": "TECH",
+      "reviewer_name": "张工",
+      "content": "技术难度较高，现有团队能力不足，建议引入外部技术专家或延长开发周期。",
+      "risk_level": "High",
+      "recommendation": "Reject",
+      "feedback_type": "Tech",
+      "created_at": "2025-10-23T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_002_REVIEW_FIN",
+      "department": "Finance",
+      "dept_id": "FIN",
+      "reviewer_name": "李会计",
+      "content": "预算超出年度计划50%，建议分阶段实施以分散财务压力。",
+      "risk_level": "High",
+      "recommendation": "NeedsModification",
+      "feedback_type": "Finance",
+      "created_at": "2025-10-23T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_002_REVIEW_HR",
+      "department": "HR",
+      "dept_id": "HR",
+      "reviewer_name": "王主管",
+      "content": "涉及多部门协作，需要明确人员分工和考核机制。建议补充详细的团队组织架构。",
+      "risk_level": "Low",
+      "recommendation": "NeedsModification",
+      "feedback_type": "HR",
+      "created_at": "2025-10-22T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_002_REVIEW_COMP",
+      "department": "Compliance",
+      "dept_id": "COMP",
+      "reviewer_name": "赵律师",
+      "content": "跨境数据传输不符合最新监管要求，存在合规风险，建议暂缓实施。",
+      "risk_level": "High",
+      "recommendation": "Reject",
+      "feedback_type": "Compliance",
+      "created_at": "2025-10-21T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_002_REVIEW_SEC",
+      "department": "Security",
+      "dept_id": "SEC",
+      "reviewer_name": "刘安全",
+      "content": "涉及核心业务数据，安全风险高，必须通过外部安全审计才能上线。",
+      "risk_level": "High",
+      "recommendation": "NeedsModification",
+      "feedback_type": "Security",
+      "created_at": "2025-10-23T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_003_REVIEW_TECH",
+      "department": "Tech",
+      "dept_id": "TECH",
+      "reviewer_name": "张工",
+      "content": "技术方案清晰，架构设计合理，可以启动开发。建议加强代码评审和单元测试。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "Tech",
+      "created_at": "2025-07-26T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_003_REVIEW_FIN",
+      "department": "Finance",
+      "dept_id": "FIN",
+      "reviewer_name": "李会计",
+      "content": "项目收益不明确，难以量化，建议补充详细的成本收益分析。",
+      "risk_level": "Medium",
+      "recommendation": "NeedsModification",
+      "feedback_type": "Finance",
+      "created_at": "2025-07-27T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_003_REVIEW_HR",
+      "department": "HR",
+      "dept_id": "HR",
+      "reviewer_name": "王主管",
+      "content": "人力资源充足，可以支持项目开展。建议从现有团队抽调人员，避免新增编制。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "HR",
+      "created_at": "2025-07-29T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_003_REVIEW_COMP",
+      "department": "Compliance",
+      "dept_id": "COMP",
+      "reviewer_name": "赵律师",
+      "content": "跨境数据传输不符合最新监管要求，存在合规风险，建议暂缓实施。",
+      "risk_level": "High",
+      "recommendation": "Reject",
+      "feedback_type": "Compliance",
+      "created_at": "2025-07-27T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_003_REVIEW_SEC",
+      "department": "Security",
+      "dept_id": "SEC",
+      "reviewer_name": "刘安全",
+      "content": "安全方案完善，符合安全规范，支持项目实施。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "Security",
+      "created_at": "2025-07-27T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_004_REVIEW_TECH",
+      "department": "Tech",
+      "dept_id": "TECH",
+      "reviewer_name": "张工",
+      "content": "技术方案清晰，架构设计合理，可以启动开发。建议加强代码评审和单元测试。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "Tech",
+      "created_at": "2025-09-25T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_004_REVIEW_FIN",
+      "department": "Finance",
+      "dept_id": "FIN",
+      "reviewer_name": "李会计",
+      "content": "预算合理，符合财务规划，可以批准。建议建立成本监控机制。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "Finance",
+      "created_at": "2025-09-29T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_004_REVIEW_HR",
+      "department": "HR",
+      "dept_id": "HR",
+      "reviewer_name": "王主管",
+      "content": "涉及多部门协作，需要明确人员分工和考核机制。建议补充详细的团队组织架构。",
+      "risk_level": "Low",
+      "recommendation": "NeedsModification",
+      "feedback_type": "HR",
+      "created_at": "2025-09-28T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_004_REVIEW_COMP",
+      "department": "Compliance",
+      "dept_id": "COMP",
+      "reviewer_name": "赵律师",
+      "content": "符合相关法律法规要求，数据处理流程合规，可以批准。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "Compliance",
+      "created_at": "2025-09-25T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_004_REVIEW_SEC",
+      "department": "Security",
+      "dept_id": "SEC",
+      "reviewer_name": "刘安全",
+      "content": "缺少安全评估和渗透测试环节，建议增加安全测试阶段。",
+      "risk_level": "Medium",
+      "recommendation": "NeedsModification",
+      "feedback_type": "Security",
+      "created_at": "2025-09-28T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_005_REVIEW_TECH",
+      "department": "Tech",
+      "dept_id": "TECH",
+      "reviewer_name": "张工",
+      "content": "技术栈选择合理，但需要考虑团队技术储备。建议增加2周技术培训时间。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "Tech",
+      "created_at": "2025-06-27T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_005_REVIEW_FIN",
+      "department": "Finance",
+      "dept_id": "FIN",
+      "reviewer_name": "李会计",
+      "content": "预算合理，符合财务规划，可以批准。建议建立成本监控机制。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "Finance",
+      "created_at": "2025-06-28T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_005_REVIEW_HR",
+      "department": "HR",
+      "dept_id": "HR",
+      "reviewer_name": "王主管",
+      "content": "所需人力超出当前编制，需要招聘5名工程师，招聘周期至少2个月，建议延后启动。",
+      "risk_level": "High",
+      "recommendation": "NeedsModification",
+      "feedback_type": "HR",
+      "created_at": "2025-06-28T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_005_REVIEW_COMP",
+      "department": "Compliance",
+      "dept_id": "COMP",
+      "reviewer_name": "赵律师",
+      "content": "需要进行数据安全影响评估，并报相关监管部门备案。建议增加合规流程时间。",
+      "risk_level": "Medium",
+      "recommendation": "NeedsModification",
+      "feedback_type": "Compliance",
+      "created_at": "2025-06-27T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_005_REVIEW_SEC",
+      "department": "Security",
+      "dept_id": "SEC",
+      "reviewer_name": "刘安全",
+      "content": "缺少安全评估和渗透测试环节，建议增加安全测试阶段。",
+      "risk_level": "Medium",
+      "recommendation": "NeedsModification",
+      "feedback_type": "Security",
+      "created_at": "2025-06-27T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_006_REVIEW_TECH",
+      "department": "Tech",
+      "dept_id": "TECH",
+      "reviewer_name": "张工",
+      "content": "技术方案清晰，架构设计合理，可以启动开发。建议加强代码评审和单元测试。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "Tech",
+      "created_at": "2025-09-23T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_006_REVIEW_FIN",
+      "department": "Finance",
+      "dept_id": "FIN",
+      "reviewer_name": "李会计",
+      "content": "项目收益不明确，难以量化，建议补充详细的成本收益分析。",
+      "risk_level": "Medium",
+      "recommendation": "NeedsModification",
+      "feedback_type": "Finance",
+      "created_at": "2025-09-23T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_006_REVIEW_HR",
+      "department": "HR",
+      "dept_id": "HR",
+      "reviewer_name": "王主管",
+      "content": "人力资源充足，可以支持项目开展。建议从现有团队抽调人员，避免新增编制。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "HR",
+      "created_at": "2025-09-22T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_006_REVIEW_COMP",
+      "department": "Compliance",
+      "dept_id": "COMP",
+      "reviewer_name": "赵律师",
+      "content": "合规审查通过，建议在实施过程中持续关注法规变化。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "Compliance",
+      "created_at": "2025-09-24T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_006_REVIEW_SEC",
+      "department": "Security",
+      "dept_id": "SEC",
+      "reviewer_name": "刘安全",
+      "content": "安全方案完善，符合安全规范，支持项目实施。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "Security",
+      "created_at": "2025-09-23T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_007_REVIEW_TECH",
+      "department": "Tech",
+      "dept_id": "TECH",
+      "reviewer_name": "张工",
+      "content": "技术方案可行，建议采用微服务架构以提升可扩展性。需要进行POC验证关键技术点。",
+      "risk_level": "Medium",
+      "recommendation": "NeedsModification",
+      "feedback_type": "Tech",
+      "created_at": "2025-09-03T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_007_REVIEW_FIN",
+      "department": "Finance",
+      "dept_id": "FIN",
+      "reviewer_name": "李会计",
+      "content": "项目收益不明确，难以量化，建议补充详细的成本收益分析。",
+      "risk_level": "Medium",
+      "recommendation": "NeedsModification",
+      "feedback_type": "Finance",
+      "created_at": "2025-09-01T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_007_REVIEW_HR",
+      "department": "HR",
+      "dept_id": "HR",
+      "reviewer_name": "王主管",
+      "content": "关键岗位人员流失风险高，建议增加激励措施或外包部分工作。",
+      "risk_level": "Medium",
+      "recommendation": "NeedsModification",
+      "feedback_type": "HR",
+      "created_at": "2025-09-04T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_007_REVIEW_COMP",
+      "department": "Compliance",
+      "dept_id": "COMP",
+      "reviewer_name": "赵律师",
+      "content": "符合相关法律法规要求，数据处理流程合规，可以批准。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "Compliance",
+      "created_at": "2025-09-02T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_007_REVIEW_SEC",
+      "department": "Security",
+      "dept_id": "SEC",
+      "reviewer_name": "刘安全",
+      "content": "第三方组件存在已知安全漏洞，必须升级到安全版本或更换其他组件。",
+      "risk_level": "High",
+      "recommendation": "Reject",
+      "feedback_type": "Security",
+      "created_at": "2025-09-02T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_008_REVIEW_TECH",
+      "department": "Tech",
+      "dept_id": "TECH",
+      "reviewer_name": "张工",
+      "content": "技术方案可行，建议采用微服务架构以提升可扩展性。需要进行POC验证关键技术点。",
+      "risk_level": "Medium",
+      "recommendation": "NeedsModification",
+      "feedback_type": "Tech",
+      "created_at": "2025-06-21T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_008_REVIEW_FIN",
+      "department": "Finance",
+      "dept_id": "FIN",
+      "reviewer_name": "李会计",
+      "content": "项目收益不明确，难以量化，建议补充详细的成本收益分析。",
+      "risk_level": "Medium",
+      "recommendation": "NeedsModification",
+      "feedback_type": "Finance",
+      "created_at": "2025-06-17T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_008_REVIEW_HR",
+      "department": "HR",
+      "dept_id": "HR",
+      "reviewer_name": "王主管",
+      "content": "人力资源充足，可以支持项目开展。建议从现有团队抽调人员，避免新增编制。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "HR",
+      "created_at": "2025-06-18T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_008_REVIEW_COMP",
+      "department": "Compliance",
+      "dept_id": "COMP",
+      "reviewer_name": "赵律师",
+      "content": "涉及用户个人信息处理，必须完善隐私政策并获得用户明确同意。需要补充合规方案。",
+      "risk_level": "High",
+      "recommendation": "NeedsModification",
+      "feedback_type": "Compliance",
+      "created_at": "2025-06-18T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_008_REVIEW_SEC",
+      "department": "Security",
+      "dept_id": "SEC",
+      "reviewer_name": "刘安全",
+      "content": "安全方案完善，符合安全规范，支持项目实施。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "Security",
+      "created_at": "2025-06-20T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_009_REVIEW_TECH",
+      "department": "Tech",
+      "dept_id": "TECH",
+      "reviewer_name": "张工",
+      "content": "技术难度较高，现有团队能力不足，建议引入外部技术专家或延长开发周期。",
+      "risk_level": "High",
+      "recommendation": "Reject",
+      "feedback_type": "Tech",
+      "created_at": "2025-08-24T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_009_REVIEW_FIN",
+      "department": "Finance",
+      "dept_id": "FIN",
+      "reviewer_name": "李会计",
+      "content": "预算超出年度计划50%，建议分阶段实施以分散财务压力。",
+      "risk_level": "High",
+      "recommendation": "NeedsModification",
+      "feedback_type": "Finance",
+      "created_at": "2025-08-25T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_009_REVIEW_HR",
+      "department": "HR",
+      "dept_id": "HR",
+      "reviewer_name": "王主管",
+      "content": "所需人力超出当前编制，需要招聘5名工程师，招聘周期至少2个月，建议延后启动。",
+      "risk_level": "High",
+      "recommendation": "NeedsModification",
+      "feedback_type": "HR",
+      "created_at": "2025-08-24T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_009_REVIEW_COMP",
+      "department": "Compliance",
+      "dept_id": "COMP",
+      "reviewer_name": "赵律师",
+      "content": "合规审查通过，建议在实施过程中持续关注法规变化。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "Compliance",
+      "created_at": "2025-08-26T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_009_REVIEW_SEC",
+      "department": "Security",
+      "dept_id": "SEC",
+      "reviewer_name": "刘安全",
+      "content": "安全架构设计合理，包含身份认证、权限管理、数据加密等安全措施，可以批准。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "Security",
+      "created_at": "2025-08-27T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_010_REVIEW_TECH",
+      "department": "Tech",
+      "dept_id": "TECH",
+      "reviewer_name": "张工",
+      "content": "技术难度较高，现有团队能力不足，建议引入外部技术专家或延长开发周期。",
+      "risk_level": "High",
+      "recommendation": "Reject",
+      "feedback_type": "Tech",
+      "created_at": "2025-10-05T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_010_REVIEW_FIN",
+      "department": "Finance",
+      "dept_id": "FIN",
+      "reviewer_name": "李会计",
+      "content": "预算超出年度计划50%，建议分阶段实施以分散财务压力。",
+      "risk_level": "High",
+      "recommendation": "NeedsModification",
+      "feedback_type": "Finance",
+      "created_at": "2025-10-04T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_010_REVIEW_HR",
+      "department": "HR",
+      "dept_id": "HR",
+      "reviewer_name": "王主管",
+      "content": "所需人力超出当前编制，需要招聘5名工程师，招聘周期至少2个月，建议延后启动。",
+      "risk_level": "High",
+      "recommendation": "NeedsModification",
+      "feedback_type": "HR",
+      "created_at": "2025-10-07T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_010_REVIEW_COMP",
+      "department": "Compliance",
+      "dept_id": "COMP",
+      "reviewer_name": "赵律师",
+      "content": "合规审查通过，建议在实施过程中持续关注法规变化。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "Compliance",
+      "created_at": "2025-10-05T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_010_REVIEW_SEC",
+      "department": "Security",
+      "dept_id": "SEC",
+      "reviewer_name": "刘安全",
+      "content": "第三方组件存在已知安全漏洞，必须升级到安全版本或更换其他组件。",
+      "risk_level": "High",
+      "recommendation": "Reject",
+      "feedback_type": "Security",
+      "created_at": "2025-10-06T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_011_REVIEW_TECH",
+      "department": "Tech",
+      "dept_id": "TECH",
+      "reviewer_name": "张工",
+      "content": "技术难度较高，现有团队能力不足，建议引入外部技术专家或延长开发周期。",
+      "risk_level": "High",
+      "recommendation": "Reject",
+      "feedback_type": "Tech",
+      "created_at": "2025-06-18T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_011_REVIEW_FIN",
+      "department": "Finance",
+      "dept_id": "FIN",
+      "reviewer_name": "李会计",
+      "content": "项目收益不明确，难以量化，建议补充详细的成本收益分析。",
+      "risk_level": "Medium",
+      "recommendation": "NeedsModification",
+      "feedback_type": "Finance",
+      "created_at": "2025-06-21T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_011_REVIEW_HR",
+      "department": "HR",
+      "dept_id": "HR",
+      "reviewer_name": "王主管",
+      "content": "关键岗位人员流失风险高，建议增加激励措施或外包部分工作。",
+      "risk_level": "Medium",
+      "recommendation": "NeedsModification",
+      "feedback_type": "HR",
+      "created_at": "2025-06-22T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_011_REVIEW_COMP",
+      "department": "Compliance",
+      "dept_id": "COMP",
+      "reviewer_name": "赵律师",
+      "content": "涉及用户个人信息处理，必须完善隐私政策并获得用户明确同意。需要补充合规方案。",
+      "risk_level": "High",
+      "recommendation": "NeedsModification",
+      "feedback_type": "Compliance",
+      "created_at": "2025-06-19T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_011_REVIEW_SEC",
+      "department": "Security",
+      "dept_id": "SEC",
+      "reviewer_name": "刘安全",
+      "content": "安全方案完善，符合安全规范，支持项目实施。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "Security",
+      "created_at": "2025-06-18T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_012_REVIEW_TECH",
+      "department": "Tech",
+      "dept_id": "TECH",
+      "reviewer_name": "张工",
+      "content": "技术方案可行，建议采用微服务架构以提升可扩展性。需要进行POC验证关键技术点。",
+      "risk_level": "Medium",
+      "recommendation": "NeedsModification",
+      "feedback_type": "Tech",
+      "created_at": "2025-06-12T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_012_REVIEW_FIN",
+      "department": "Finance",
+      "dept_id": "FIN",
+      "reviewer_name": "李会计",
+      "content": "预算合理，符合财务规划，可以批准。建议建立成本监控机制。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "Finance",
+      "created_at": "2025-06-11T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_012_REVIEW_HR",
+      "department": "HR",
+      "dept_id": "HR",
+      "reviewer_name": "王主管",
+      "content": "人员配置合理，技能匹配度高，支持项目实施。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "HR",
+      "created_at": "2025-06-13T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_012_REVIEW_COMP",
+      "department": "Compliance",
+      "dept_id": "COMP",
+      "reviewer_name": "赵律师",
+      "content": "符合相关法律法规要求，数据处理流程合规，可以批准。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "Compliance",
+      "created_at": "2025-06-12T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_012_REVIEW_SEC",
+      "department": "Security",
+      "dept_id": "SEC",
+      "reviewer_name": "刘安全",
+      "content": "涉及核心业务数据，安全风险高，必须通过外部安全审计才能上线。",
+      "risk_level": "High",
+      "recommendation": "NeedsModification",
+      "feedback_type": "Security",
+      "created_at": "2025-06-10T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_013_REVIEW_TECH",
+      "department": "Tech",
+      "dept_id": "TECH",
+      "reviewer_name": "张工",
+      "content": "技术方案可行，建议采用微服务架构以提升可扩展性。需要进行POC验证关键技术点。",
+      "risk_level": "Medium",
+      "recommendation": "NeedsModification",
+      "feedback_type": "Tech",
+      "created_at": "2025-10-23T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_013_REVIEW_FIN",
+      "department": "Finance",
+      "dept_id": "FIN",
+      "reviewer_name": "李会计",
+      "content": "成本估算不够准确，缺少隐性成本考虑，建议重新核算后再审批。",
+      "risk_level": "Medium",
+      "recommendation": "Reject",
+      "feedback_type": "Finance",
+      "created_at": "2025-10-20T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_013_REVIEW_HR",
+      "department": "HR",
+      "dept_id": "HR",
+      "reviewer_name": "王主管",
+      "content": "关键岗位人员流失风险高，建议增加激励措施或外包部分工作。",
+      "risk_level": "Medium",
+      "recommendation": "NeedsModification",
+      "feedback_type": "HR",
+      "created_at": "2025-10-22T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_013_REVIEW_COMP",
+      "department": "Compliance",
+      "dept_id": "COMP",
+      "reviewer_name": "赵律师",
+      "content": "涉及用户个人信息处理，必须完善隐私政策并获得用户明确同意。需要补充合规方案。",
+      "risk_level": "High",
+      "recommendation": "NeedsModification",
+      "feedback_type": "Compliance",
+      "created_at": "2025-10-23T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_013_REVIEW_SEC",
+      "department": "Security",
+      "dept_id": "SEC",
+      "reviewer_name": "刘安全",
+      "content": "安全架构设计合理，包含身份认证、权限管理、数据加密等安全措施，可以批准。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "Security",
+      "created_at": "2025-10-20T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_014_REVIEW_TECH",
+      "department": "Tech",
+      "dept_id": "TECH",
+      "reviewer_name": "张工",
+      "content": "技术方案可行，建议采用微服务架构以提升可扩展性。需要进行POC验证关键技术点。",
+      "risk_level": "Medium",
+      "recommendation": "NeedsModification",
+      "feedback_type": "Tech",
+      "created_at": "2025-09-13T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_014_REVIEW_FIN",
+      "department": "Finance",
+      "dept_id": "FIN",
+      "reviewer_name": "李会计",
+      "content": "ROI分析合理，预计18个月回本，财务可行性好，建议批准。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "Finance",
+      "created_at": "2025-09-13T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_014_REVIEW_HR",
+      "department": "HR",
+      "dept_id": "HR",
+      "reviewer_name": "王主管",
+      "content": "人员配置合理，技能匹配度高，支持项目实施。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "HR",
+      "created_at": "2025-09-13T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_014_REVIEW_COMP",
+      "department": "Compliance",
+      "dept_id": "COMP",
+      "reviewer_name": "赵律师",
+      "content": "符合相关法律法规要求，数据处理流程合规，可以批准。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "Compliance",
+      "created_at": "2025-09-13T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_014_REVIEW_SEC",
+      "department": "Security",
+      "dept_id": "SEC",
+      "reviewer_name": "刘安全",
+      "content": "涉及核心业务数据，安全风险高，必须通过外部安全审计才能上线。",
+      "risk_level": "High",
+      "recommendation": "NeedsModification",
+      "feedback_type": "Security",
+      "created_at": "2025-09-14T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_015_REVIEW_TECH",
+      "department": "Tech",
+      "dept_id": "TECH",
+      "reviewer_name": "张工",
+      "content": "技术栈选择合理，但需要考虑团队技术储备。建议增加2周技术培训时间。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "Tech",
+      "created_at": "2025-07-20T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_015_REVIEW_FIN",
+      "department": "Finance",
+      "dept_id": "FIN",
+      "reviewer_name": "李会计",
+      "content": "成本估算不够准确，缺少隐性成本考虑，建议重新核算后再审批。",
+      "risk_level": "Medium",
+      "recommendation": "Reject",
+      "feedback_type": "Finance",
+      "created_at": "2025-07-18T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_015_REVIEW_HR",
+      "department": "HR",
+      "dept_id": "HR",
+      "reviewer_name": "王主管",
+      "content": "人力资源充足，可以支持项目开展。建议从现有团队抽调人员，避免新增编制。",
+      "risk_level": "Low",
+      "recommendation": "Approve",
+      "feedback_type": "HR",
+      "created_at": "2025-07-20T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_015_REVIEW_COMP",
+      "department": "Compliance",
+      "dept_id": "COMP",
+      "reviewer_name": "赵律师",
+      "content": "涉及用户个人信息处理，必须完善隐私政策并获得用户明确同意。需要补充合规方案。",
+      "risk_level": "High",
+      "recommendation": "NeedsModification",
+      "feedback_type": "Compliance",
+      "created_at": "2025-07-20T00:40:39.477599"
+    },
+    {
+      "comment_id": "PRD_015_REVIEW_SEC",
+      "department": "Security",
+      "dept_id": "SEC",
+      "reviewer_name": "刘安全",
+      "content": "缺少安全评估和渗透测试环节，建议增加安全测试阶段。",
+      "risk_level": "Medium",
+      "recommendation": "NeedsModification",
+      "feedback_type": "Security",
+      "created_at": "2025-07-17T00:40:39.477599"
+    }
+  ],
+  "risk_assessments": [
+    {
+      "risk_id": "PRD_001_RISK_1",
+      "risk_category": "Financial",
+      "severity": "High",
+      "probability": 0.7472221833399956,
+      "impact": "预算超出年度计划50%，建议分阶段实施以分散财务压力。",
+      "mitigation_strategy": "需要制定详细的风险缓解方案并持续监控"
+    },
+    {
+      "risk_id": "PRD_002_RISK_1",
+      "risk_category": "Technical",
+      "severity": "High",
+      "probability": 0.8504704434859105,
+      "impact": "技术难度较高，现有团队能力不足，建议引入外部技术专家或延长开发周期。",
+      "mitigation_strategy": "需要制定详细的风险缓解方案并持续监控"
+    },
+    {
+      "risk_id": "PRD_002_RISK_2",
+      "risk_category": "Financial",
+      "severity": "High",
+      "probability": 0.7754097548572825,
+      "impact": "预算超出年度计划50%，建议分阶段实施以分散财务压力。",
+      "mitigation_strategy": "需要制定详细的风险缓解方案并持续监控"
+    },
+    {
+      "risk_id": "PRD_002_RISK_3",
+      "risk_category": "Compliance",
+      "severity": "High",
+      "probability": 0.7465347163059003,
+      "impact": "跨境数据传输不符合最新监管要求，存在合规风险，建议暂缓实施。",
+      "mitigation_strategy": "需要制定详细的风险缓解方案并持续监控"
+    },
+    {
+      "risk_id": "PRD_002_RISK_4",
+      "risk_category": "Security",
+      "severity": "High",
+      "probability": 0.6944268771338673,
+      "impact": "涉及核心业务数据，安全风险高，必须通过外部安全审计才能上线。",
+      "mitigation_strategy": "需要制定详细的风险缓解方案并持续监控"
+    },
+    {
+      "risk_id": "PRD_003_RISK_1",
+      "risk_category": "Compliance",
+      "severity": "High",
+      "probability": 0.7701947710890443,
+      "impact": "跨境数据传输不符合最新监管要求，存在合规风险，建议暂缓实施。",
+      "mitigation_strategy": "需要制定详细的风险缓解方案并持续监控"
+    },
+    {
+      "risk_id": "PRD_005_RISK_1",
+      "risk_category": "Resource",
+      "severity": "High",
+      "probability": 0.8290475274935925,
+      "impact": "所需人力超出当前编制，需要招聘5名工程师，招聘周期至少2个月，建议延后启动。",
+      "mitigation_strategy": "需要制定详细的风险缓解方案并持续监控"
+    },
+    {
+      "risk_id": "PRD_007_RISK_1",
+      "risk_category": "Security",
+      "severity": "High",
+      "probability": 0.80724964822374,
+      "impact": "第三方组件存在已知安全漏洞，必须升级到安全版本或更换其他组件。",
+      "mitigation_strategy": "需要制定详细的风险缓解方案并持续监控"
+    },
+    {
+      "risk_id": "PRD_008_RISK_1",
+      "risk_category": "Compliance",
+      "severity": "High",
+      "probability": 0.7233648335494401,
+      "impact": "涉及用户个人信息处理，必须完善隐私政策并获得用户明确同意。需要补充合规方案。",
+      "mitigation_strategy": "需要制定详细的风险缓解方案并持续监控"
+    },
+    {
+      "risk_id": "PRD_009_RISK_1",
+      "risk_category": "Technical",
+      "severity": "High",
+      "probability": 0.6209558482174872,
+      "impact": "技术难度较高，现有团队能力不足，建议引入外部技术专家或延长开发周期。",
+      "mitigation_strategy": "需要制定详细的风险缓解方案并持续监控"
+    },
+    {
+      "risk_id": "PRD_009_RISK_2",
+      "risk_category": "Financial",
+      "severity": "High",
+      "probability": 0.7070947635861612,
+      "impact": "预算超出年度计划50%，建议分阶段实施以分散财务压力。",
+      "mitigation_strategy": "需要制定详细的风险缓解方案并持续监控"
+    },
+    {
+      "risk_id": "PRD_009_RISK_3",
+      "risk_category": "Resource",
+      "severity": "High",
+      "probability": 0.6392818642891834,
+      "impact": "所需人力超出当前编制，需要招聘5名工程师，招聘周期至少2个月，建议延后启动。",
+      "mitigation_strategy": "需要制定详细的风险缓解方案并持续监控"
+    },
+    {
+      "risk_id": "PRD_010_RISK_1",
+      "risk_category": "Technical",
+      "severity": "High",
+      "probability": 0.6587618833647244,
+      "impact": "技术难度较高，现有团队能力不足，建议引入外部技术专家或延长开发周期。",
+      "mitigation_strategy": "需要制定详细的风险缓解方案并持续监控"
+    },
+    {
+      "risk_id": "PRD_010_RISK_2",
+      "risk_category": "Financial",
+      "severity": "High",
+      "probability": 0.6235425377609916,
+      "impact": "预算超出年度计划50%，建议分阶段实施以分散财务压力。",
+      "mitigation_strategy": "需要制定详细的风险缓解方案并持续监控"
+    },
+    {
+      "risk_id": "PRD_010_RISK_3",
+      "risk_category": "Resource",
+      "severity": "High",
+      "probability": 0.8115037824441911,
+      "impact": "所需人力超出当前编制，需要招聘5名工程师，招聘周期至少2个月，建议延后启动。",
+      "mitigation_strategy": "需要制定详细的风险缓解方案并持续监控"
+    },
+    {
+      "risk_id": "PRD_010_RISK_4",
+      "risk_category": "Security",
+      "severity": "High",
+      "probability": 0.7870130112256026,
+      "impact": "第三方组件存在已知安全漏洞，必须升级到安全版本或更换其他组件。",
+      "mitigation_strategy": "需要制定详细的风险缓解方案并持续监控"
+    },
+    {
+      "risk_id": "PRD_011_RISK_1",
+      "risk_category": "Technical",
+      "severity": "High",
+      "probability": 0.6420747827572011,
+      "impact": "技术难度较高，现有团队能力不足，建议引入外部技术专家或延长开发周期。",
+      "mitigation_strategy": "需要制定详细的风险缓解方案并持续监控"
+    },
+    {
+      "risk_id": "PRD_011_RISK_2",
+      "risk_category": "Compliance",
+      "severity": "High",
+      "probability": 0.8046569723464887,
+      "impact": "涉及用户个人信息处理，必须完善隐私政策并获得用户明确同意。需要补充合规方案。",
+      "mitigation_strategy": "需要制定详细的风险缓解方案并持续监控"
+    },
+    {
+      "risk_id": "PRD_012_RISK_1",
+      "risk_category": "Security",
+      "severity": "High",
+      "probability": 0.6884996017755962,
+      "impact": "涉及核心业务数据，安全风险高，必须通过外部安全审计才能上线。",
+      "mitigation_strategy": "需要制定详细的风险缓解方案并持续监控"
+    },
+    {
+      "risk_id": "PRD_013_RISK_1",
+      "risk_category": "Compliance",
+      "severity": "High",
+      "probability": 0.7965044574251187,
+      "impact": "涉及用户个人信息处理，必须完善隐私政策并获得用户明确同意。需要补充合规方案。",
+      "mitigation_strategy": "需要制定详细的风险缓解方案并持续监控"
+    },
+    {
+      "risk_id": "PRD_014_RISK_1",
+      "risk_category": "Security",
+      "severity": "High",
+      "probability": 0.7497445381793393,
+      "impact": "涉及核心业务数据，安全风险高，必须通过外部安全审计才能上线。",
+      "mitigation_strategy": "需要制定详细的风险缓解方案并持续监控"
+    },
+    {
+      "risk_id": "PRD_015_RISK_1",
+      "risk_category": "Compliance",
+      "severity": "High",
+      "probability": 0.7286990838452125,
+      "impact": "涉及用户个人信息处理，必须完善隐私政策并获得用户明确同意。需要补充合规方案。",
+      "mitigation_strategy": "需要制定详细的风险缓解方案并持续监控"
+    }
+  ],
+  "decision_recommendations": [
+    {
+      "recommendation_id": "PRD_001_RECOMMENDATION",
+      "decision_type": "Modify",
+      "confidence_score": 0.75,
+      "reasoning": "多个部门提出修改意见，建议完善方案后再审批。",
+      "alternative_options": [
+        "分阶段实施",
+        "引入外部专家",
+        "调整预算和时间"
+      ],
+      "risk_analysis": "基于5个部门的评审意见，项目总体风险等级为中等。",
+      "created_at": "2025-09-22T00:40:39.477599"
+    },
+    {
+      "recommendation_id": "PRD_002_RECOMMENDATION",
+      "decision_type": "Reject",
+      "confidence_score": 0.85,
+      "reasoning": "多个部门建议拒绝，项目存在重大风险或不可行因素，建议暂缓实施。",
+      "alternative_options": [
+        "分阶段实施",
+        "引入外部专家",
+        "调整预算和时间"
+      ],
+      "risk_analysis": "基于5个部门的评审意见，项目总体风险等级为中等。",
+      "created_at": "2025-10-27T00:40:39.477599"
+    },
+    {
+      "recommendation_id": "PRD_003_RECOMMENDATION",
+      "decision_type": "RequestMoreInfo",
+      "confidence_score": 0.6,
+      "reasoning": "评审意见分歧较大，建议补充更多信息并重新评估。",
+      "alternative_options": [
+        "分阶段实施",
+        "引入外部专家",
+        "调整预算和时间"
+      ],
+      "risk_analysis": "基于5个部门的评审意见，项目总体风险等级为中等。",
+      "created_at": "2025-08-04T00:40:39.477599"
+    },
+    {
+      "recommendation_id": "PRD_004_RECOMMENDATION",
+      "decision_type": "RequestMoreInfo",
+      "confidence_score": 0.6,
+      "reasoning": "评审意见分歧较大，建议补充更多信息并重新评估。",
+      "alternative_options": [
+        "分阶段实施",
+        "引入外部专家",
+        "调整预算和时间"
+      ],
+      "risk_analysis": "基于5个部门的评审意见，项目总体风险等级为中等。",
+      "created_at": "2025-10-04T00:40:39.477599"
+    },
+    {
+      "recommendation_id": "PRD_005_RECOMMENDATION",
+      "decision_type": "Modify",
+      "confidence_score": 0.75,
+      "reasoning": "多个部门提出修改意见，建议完善方案后再审批。",
+      "alternative_options": [
+        "分阶段实施",
+        "引入外部专家",
+        "调整预算和时间"
+      ],
+      "risk_analysis": "基于5个部门的评审意见，项目总体风险等级为中等。",
+      "created_at": "2025-07-04T00:40:39.477599"
+    },
+    {
+      "recommendation_id": "PRD_006_RECOMMENDATION",
+      "decision_type": "Approve",
+      "confidence_score": 0.9,
+      "reasoning": "各部门评审意见积极，项目可行性高，建议批准实施。",
+      "alternative_options": [
+        "分阶段实施",
+        "引入外部专家",
+        "调整预算和时间"
+      ],
+      "risk_analysis": "基于5个部门的评审意见，项目总体风险等级为中等。",
+      "created_at": "2025-09-29T00:40:39.477599"
+    },
+    {
+      "recommendation_id": "PRD_007_RECOMMENDATION",
+      "decision_type": "Modify",
+      "confidence_score": 0.75,
+      "reasoning": "多个部门提出修改意见，建议完善方案后再审批。",
+      "alternative_options": [
+        "分阶段实施",
+        "引入外部专家",
+        "调整预算和时间"
+      ],
+      "risk_analysis": "基于5个部门的评审意见，项目总体风险等级为中等。",
+      "created_at": "2025-09-06T00:40:39.477599"
+    },
+    {
+      "recommendation_id": "PRD_008_RECOMMENDATION",
+      "decision_type": "Modify",
+      "confidence_score": 0.75,
+      "reasoning": "多个部门提出修改意见，建议完善方案后再审批。",
+      "alternative_options": [
+        "分阶段实施",
+        "引入外部专家",
+        "调整预算和时间"
+      ],
+      "risk_analysis": "基于5个部门的评审意见，项目总体风险等级为中等。",
+      "created_at": "2025-06-24T00:40:39.477599"
+    },
+    {
+      "recommendation_id": "PRD_009_RECOMMENDATION",
+      "decision_type": "RequestMoreInfo",
+      "confidence_score": 0.6,
+      "reasoning": "评审意见分歧较大，建议补充更多信息并重新评估。",
+      "alternative_options": [
+        "分阶段实施",
+        "引入外部专家",
+        "调整预算和时间"
+      ],
+      "risk_analysis": "基于5个部门的评审意见，项目总体风险等级为中等。",
+      "created_at": "2025-08-30T00:40:39.477599"
+    },
+    {
+      "recommendation_id": "PRD_010_RECOMMENDATION",
+      "decision_type": "Reject",
+      "confidence_score": 0.85,
+      "reasoning": "多个部门建议拒绝，项目存在重大风险或不可行因素，建议暂缓实施。",
+      "alternative_options": [
+        "分阶段实施",
+        "引入外部专家",
+        "调整预算和时间"
+      ],
+      "risk_analysis": "基于5个部门的评审意见，项目总体风险等级为中等。",
+      "created_at": "2025-10-13T00:40:39.477599"
+    },
+    {
+      "recommendation_id": "PRD_011_RECOMMENDATION",
+      "decision_type": "Modify",
+      "confidence_score": 0.75,
+      "reasoning": "多个部门提出修改意见，建议完善方案后再审批。",
+      "alternative_options": [
+        "分阶段实施",
+        "引入外部专家",
+        "调整预算和时间"
+      ],
+      "risk_analysis": "基于5个部门的评审意见，项目总体风险等级为中等。",
+      "created_at": "2025-06-26T00:40:39.477599"
+    },
+    {
+      "recommendation_id": "PRD_012_RECOMMENDATION",
+      "decision_type": "RequestMoreInfo",
+      "confidence_score": 0.6,
+      "reasoning": "评审意见分歧较大，建议补充更多信息并重新评估。",
+      "alternative_options": [
+        "分阶段实施",
+        "引入外部专家",
+        "调整预算和时间"
+      ],
+      "risk_analysis": "基于5个部门的评审意见，项目总体风险等级为中等。",
+      "created_at": "2025-06-18T00:40:39.477599"
+    },
+    {
+      "recommendation_id": "PRD_013_RECOMMENDATION",
+      "decision_type": "Modify",
+      "confidence_score": 0.75,
+      "reasoning": "多个部门提出修改意见，建议完善方案后再审批。",
+      "alternative_options": [
+        "分阶段实施",
+        "引入外部专家",
+        "调整预算和时间"
+      ],
+      "risk_analysis": "基于5个部门的评审意见，项目总体风险等级为中等。",
+      "created_at": "2025-10-28T00:40:39.477599"
+    },
+    {
+      "recommendation_id": "PRD_014_RECOMMENDATION",
+      "decision_type": "RequestMoreInfo",
+      "confidence_score": 0.6,
+      "reasoning": "评审意见分歧较大，建议补充更多信息并重新评估。",
+      "alternative_options": [
+        "分阶段实施",
+        "引入外部专家",
+        "调整预算和时间"
+      ],
+      "risk_analysis": "基于5个部门的评审意见，项目总体风险等级为中等。",
+      "created_at": "2025-09-18T00:40:39.477599"
+    },
+    {
+      "recommendation_id": "PRD_015_RECOMMENDATION",
+      "decision_type": "RequestMoreInfo",
+      "confidence_score": 0.6,
+      "reasoning": "评审意见分歧较大，建议补充更多信息并重新评估。",
+      "alternative_options": [
+        "分阶段实施",
+        "引入外部专家",
+        "调整预算和时间"
+      ],
+      "risk_analysis": "基于5个部门的评审意见，项目总体风险等级为中等。",
+      "created_at": "2025-07-22T00:40:39.477599"
+    }
+  ],
+  "metadata": {
+    "generated_at": "2025-11-22T00:40:39.477824",
+    "num_prds": 15,
+    "num_comments": 75,
+    "num_risks": 22,
+    "num_recommendations": 15
+  }
+}
