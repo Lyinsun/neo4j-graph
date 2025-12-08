@@ -1,6 +1,6 @@
 """
 PRD Review Scenario Data Generator
-Generate realistic PRD review data based on the Ontology model
+Generate realistic PRD review data based on the Ontology.csv model
 """
 import json
 import random
