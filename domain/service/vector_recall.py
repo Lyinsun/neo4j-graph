@@ -177,6 +177,116 @@ class VectorRecallSystem:
             logger.error(f"Risk identification failed: {e}")
             return []
 
+    def search_knowledge_base(
+        self,
+        query_text: str,
+        top_k: int = 8,
+        node_label: str = "Ontology"
+    ) -> List[Dict[str, Any]]:
+        """
+        Generic knowledge base search for any node type
+
+        Args:
+            query_text: Query text
+            top_k: Number of results to return
+            node_label: Node type to search (default: Ontology)
+
+        Returns:
+            list: Relevant nodes with similarity scores
+        """
+        logger.info(f"Searching {node_label} knowledge base for: {query_text[:50]}...")
+
+        # Generate embedding for query
+        query_embedding = self.embedding_service.generate_embedding(query_text)
+
+        # Map node types to their vector indexes
+        index_mapping = {
+            "Ontology": "ontology_name_vector",
+            "PRD": "prd_description_vector",
+            "ReviewComment": "review_content_vector",
+            "RiskAssessment": "risk_impact_vector"
+        }
+
+        index_name = index_mapping.get(node_label, f"{node_label.lower()}_name_vector")
+
+        # Dynamic query based on node type
+        if node_label == "Ontology":
+            cypher_query = f"""
+            CALL db.index.vector.queryNodes('{index_name}', $k, $embedding)
+            YIELD node, score
+            RETURN 
+                node.name AS name,
+                node.version AS version,
+                node.node_id AS node_id,
+                score AS similarity
+            ORDER BY score DESC
+            LIMIT $k
+            """
+        elif node_label == "PRD":
+            cypher_query = f"""
+            CALL db.index.vector.queryNodes('{index_name}', $k, $embedding)
+            YIELD node, score
+            RETURN 
+                node.prd_id AS prd_id,
+                node.title AS title,
+                node.description AS description,
+                score AS similarity
+            ORDER BY score DESC
+            LIMIT $k
+            """
+        elif node_label == "ReviewComment":
+            cypher_query = f"""
+            CALL db.index.vector.queryNodes('{index_name}', $k, $embedding)
+            YIELD node, score
+            RETURN 
+                node.comment_id AS comment_id,
+                node.content AS content,
+                node.department AS department,
+                score AS similarity
+            ORDER BY score DESC
+            LIMIT $k
+            """
+        elif node_label == "RiskAssessment":
+            cypher_query = f"""
+            CALL db.index.vector.queryNodes('{index_name}', $k, $embedding)
+            YIELD node, score
+            RETURN 
+                node.risk_id AS risk_id,
+                node.risk_category AS category,
+                node.impact AS impact,
+                node.severity AS severity,
+                score AS similarity
+            ORDER BY score DESC
+            LIMIT $k
+            """
+        else:
+            # Generic query for any other node type
+            cypher_query = f"""
+            CALL db.index.vector.queryNodes('{index_name}', $k, $embedding)
+            YIELD node, score
+            RETURN 
+                node.name AS name,
+                score AS similarity
+            ORDER BY score DESC
+            LIMIT $k
+            """
+
+        try:
+            results = self.client.execute_query(
+                cypher_query,
+                {
+                    "k": top_k,
+                    "embedding": query_embedding
+                }
+            )
+
+            logger.info(f"✓ Found {len(results)} {node_label} entries")
+            return results
+
+        except Exception as e:
+            logger.error(f"{node_label} knowledge search failed: {e}")
+            return []
+
     def search_department_knowledge_base(
         self,
         query_text: str,
@@ -411,21 +521,46 @@ class RecallResultFormatter:
         return "\n".join(output)
 
     @staticmethod
-    def format_knowledge_base(results: List[Dict[str, Any]], department: str) -> str:
-        """Format department knowledge base results"""
+    def format_knowledge_base(results: List[Dict[str, Any]], node_label: str) -> str:
+        """Format knowledge base results based on node type"""
         if not results:
-            return f"No knowledge found in {department} department."
+            return f"No {node_label} knowledge found."
 
         output = ["\n" + "=" * 80]
-        output.append(f"{department.upper()} DEPARTMENT KNOWLEDGE BASE")
+        output.append(f"{node_label.upper()} KNOWLEDGE BASE RESULTS")
         output.append("=" * 80)
 
         for i, entry in enumerate(results, 1):
-            output.append(f"\n[{i}] {entry['department_name']} - {entry['prd_title']}")
-            output.append(f"    Relevance: {entry['relevance']:.4f}")
-            output.append(f"    Reviewer: {entry['reviewer']}")
-            output.append(f"    Knowledge: {entry['knowledge']}")
-            output.append(f"    Recommendation: {entry['recommendation']} | Risk: {entry['risk_level']}")
+            if node_label == "Ontology":
+                # Format Ontology results
+                output.append(f"\n[{i}] {entry['name']}")
+                output.append(f"    Similarity: {entry['similarity']:.4f}")
+                output.append(f"    Version: {entry.get('version', 'N/A')}")
+                output.append(f"    Node ID: {entry['node_id']}")
+            elif node_label == "PRD":
+                # Format PRD results
+                output.append(f"\n[{i}] {entry['title']}")
+                output.append(f"    Similarity: {entry['similarity']:.4f}")
+                output.append(f"    PRD ID: {entry['prd_id']}")
+                output.append(f"    Description: {entry['description'][:150]}...")
+            elif node_label in ["ReviewComment", "RiskAssessment"]:
+                # Format department knowledge results
+                output.append(f"\n[{i}] {entry.get('department_name', '')} - {entry.get('prd_title', '')}")
+                output.append(f"    Relevance: {entry.get('relevance', entry.get('similarity', 0)):.4f}")
+                if entry.get('reviewer'):
+                    output.append(f"    Reviewer: {entry['reviewer']}")
+                if entry.get('knowledge'):
+                    output.append(f"    Knowledge: {entry['knowledge']}")
+                if entry.get('recommendation'):
+                    risk_level = entry.get('risk_level', 'N/A')
+                    output.append(f"    Recommendation: {entry['recommendation']} | Risk: {risk_level}")
+            else:
+                # Generic format for other node types
+                output.append(f"\n[{i}] {entry.get('name', 'N/A')}")
+                output.append(f"    Similarity: {entry.get('similarity', 0):.4f}")
+                for key, value in entry.items():
+                    if key not in ['name', 'similarity']:
+                        output.append(f"    {key.capitalize()}: {value}")
 
         return "\n".join(output)
 
