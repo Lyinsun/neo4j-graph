@@ -9,8 +9,8 @@ Implements 4 recall scenarios:
 import logging
 from typing import List, Dict, Any, Optional
 
-from neo4j_client import Neo4jClient
-from embedding_service import EmbeddingService
+from infrastructure.persistence.neo4j.neo4j_client import Neo4jClient
+from infrastructure.service.embedding.embedding_service import EmbeddingService
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

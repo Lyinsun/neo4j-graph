@@ -20,6 +20,16 @@ PRD审核向量召回系统
 2. **智能评审建议** - 从相似PRD的历史评审意见中提取建议
 3. **风险识别预警** - 识别类似场景的历史风险点
 4. **部门知识库检索** - 按部门检索相关审核经验和知识
+5. **航班数据管理** - 完整的航班运行和机场协同决策数据模型支持
+
+### 数据模型支持
+
+本项目同时支持PRD审核和航班场景两种数据模型：
+
+- **PRD审核模型**：用于产品需求文档的智能评审和召回
+- **航班场景模型**：基于《航班场景v0.4.pdf》构建的完整Neo4j图数据库模型，用于航班运行和机场协同决策
+
+详细的航班场景数据模型说明请参考：`docs/README_flight_schema.md`
 
 ### 数据模型
 
@@ -53,12 +63,12 @@ PRD审核向量召回系统
 
 - Python 3.8+
 - Neo4j 5.23.0 (推荐Enterprise版本以确保向量索引支持)
-- OpenRouter API Key
+- OpenRouter API Key (用于生成嵌入向量)
 
 ### 2. 安装依赖
 
 ```bash
-cd /Users/von/Code/test/neo4j
+cd /Users/bytedance/Documents/Code/deep-world/neo4j-graph
 pip install -r requirements.txt
 ```
 
@@ -70,112 +80,105 @@ pip install -r requirements.txt
 # OpenRouter API Configuration
 OPENROUTER_API_KEY=sk-or-v1-your-api-key
 
-# Neo4j Configuration (可选，有默认值)
-NEO4J_URI=http://10.160.4.92:7474
-NEO4J_USER=neo4j
-NEO4J_PASSWORD=818iai818!
+# Neo4j Environment Selection
+# Set to 'local' for local development or 'production' for online environment
+NEO4J_ENV = local
+
+# Local Neo4j Configuration
+NEO4J_LOCAL_URI = neo4j://127.0.0.1:7687
+NEO4J_LOCAL_USER = neo4j
+NEO4J_LOCAL_PASSWORD = 818iai818!
+NEO4J_LOCAL_DATABASE = deepworld
+
+# Production Neo4j Configuration
+NEO4J_PROD_URI = http://10.160.4.92:7474
+NEO4J_PROD_USER = neo4j
+NEO4J_PROD_PASSWORD = 818iai818!
+NEO4J_PROD_DATABASE = 
 ```
 
 ### 4. 验证配置
 
 ```bash
-cd src
-python config.py
+python -m infrastructure.config.config
 ```
 
 ## 使用方法
 
-### 快速开始 - 运行完整演示
+### 极速启动 - Quickstart脚本
+
+为了方便快速上手，我们提供了`quickstart.sh`脚本，可以一键完成安装、配置验证和演示运行：
 
 ```bash
-cd src
-python demo.py
+chmod +x quickstart.sh
+./quickstart.sh
 ```
 
-演示脚本将:
-1. 连接到Neo4j数据库
-2. 测试OpenRouter API
-3. 生成15条PRD模拟数据
-4. 创建向量索引
-5. 导入数据并生成嵌入向量
-6. 运行4种召回场景演示
+该脚本将：
+1. 安装所有Python依赖
+2. 验证环境变量配置
+3. 运行完整演示程序
 
-### 分步骤使用
+### 快速开始 - CLI命令行接口
 
-#### Step 1: 测试数据库连接
+本系统提供了统一的CLI命令行接口，所有功能都可以通过`interface.cli.main`模块访问:
 
 ```bash
-cd src
-python neo4j_client.py
+python -m interface.cli.main --help
 ```
 
-#### Step 2: 测试嵌入服务
+### 核心功能命令
+
+#### 1. 测试Neo4j连接和插入功能
 
 ```bash
-python embedding_service.py
+python -m interface.cli.main test-insert
 ```
 
-#### Step 3: 生成模拟数据
+此命令将:
+- 连接到Neo4j数据库
+- 创建3个测试节点(张三、李四、王五)
+- 创建2个测试关系(朋友关系)
+- 验证数据库写入功能
+
+#### 2. 导入航班数据(CSV文件)
 
 ```bash
-python data_generator.py
+python -m interface.cli.main import-flight --data-dir data/Flight
 ```
 
-生成的数据保存在 `data/prd_scenarios.json`
+#### 3. 创建向量索引
 
-#### Step 4: 创建向量索引并导入数据
+```bash
+python -m interface.cli.main create-index --index-name prd-embedding-index --node-label PRD --property-name embedding
+```
+
+#### 4. 执行向量召回
+
+```bash
+python -m interface.cli.main recall --query "如何优化系统性能" --node-label PRD --top-k 5 --scenario similar_prds
+```
+
+### Python API 使用
+
+如果你需要在Python代码中使用本系统，可以通过以下方式导入:
 
 ```python
-from neo4j_client import Neo4jClient
-from embedding_service import EmbeddingService
-from vector_indexer import VectorIndexer
+# 导入核心组件
+from infrastructure.persistence.neo4j.neo4j_client import Neo4jClient
+from infrastructure.service.embedding.embedding_service import EmbeddingService
+from domain.service.vector_indexer import VectorIndexer
+from domain.service.vector_recall import VectorRecallSystem, RecallResultFormatter
 
-# 初始化
-client = Neo4jClient()
-embedding = EmbeddingService()
-indexer = VectorIndexer(client, embedding)
-
-# 创建约束和索引
-client.create_constraints()
-indexer.create_all_indexes()
-
-# 导入数据
-indexer.import_data_with_embeddings('data/prd_scenarios.json')
-
-client.close()
-```
-
-#### Step 5: 使用召回系统
-
-```python
-from neo4j_client import Neo4jClient
-from embedding_service import EmbeddingService
-from vector_recall import VectorRecallSystem, RecallResultFormatter
-
-# 初始化
-client = Neo4jClient()
-embedding = EmbeddingService()
-recall = VectorRecallSystem(client, embedding)
-formatter = RecallResultFormatter()
-
-# 场景1: 查找相似PRD
-query = "开发一个AI客服系统"
-results = recall.find_similar_prds(query, top_k=5)
-print(formatter.format_similar_prds(results))
-
-# 场景2: 获取评审建议
-suggestions = recall.get_intelligent_review_suggestions(query, top_k=10)
-print(formatter.format_review_suggestions(suggestions))
-
-# 场景3: 识别风险
-risks = recall.identify_potential_risks(query, top_k=5)
-print(formatter.format_risks(risks))
-
-# 场景4: 检索部门知识库
-knowledge = recall.search_department_knowledge_base(query, "Tech", top_k=5)
-print(formatter.format_knowledge_base(knowledge, "Tech"))
-
-client.close()
+# 初始化组件
+with Neo4jClient() as client:
+    embedding_service = EmbeddingService()
+    indexer = VectorIndexer(client, embedding_service)
+    recall_system = VectorRecallSystem(client, embedding_service)
+    formatter = RecallResultFormatter()
+    
+    # 使用功能
+    # ...
 ```
 
 ## 4种召回场景详解
@@ -276,22 +279,66 @@ knowledge = recall.search_department_knowledge_base(
 
 ## 项目结构
 
+本项目采用**领域驱动设计(DDD)**的多层级架构，将代码组织为清晰的职责层次:
+
 ```
-neo4j/
+neo4j-graph/
 ├── .env                          # 环境变量配置
 ├── requirements.txt              # Python依赖
 ├── README.md                     # 本文档
-├── src/                          # 源代码目录
-│   ├── config.py                 # 配置管理
-│   ├── neo4j_client.py          # Neo4j数据库客户端
-│   ├── embedding_service.py     # OpenRouter嵌入服务
-│   ├── data_generator.py        # PRD场景数据生成器
-│   ├── vector_indexer.py        # 向量索引管理
-│   ├── vector_recall.py         # 向量召回系统 (核心)
-│   └── demo.py                   # 交互式演示脚本
-└── data/                         # 数据目录
-    └── prd_scenarios.json       # 生成的模拟数据
+├── domain/                       # 领域层 (业务核心)
+│   └── service/                  # 领域服务
+│       ├── vector_indexer.py     # 向量索引管理
+│       └── vector_recall.py      # 向量召回系统 (核心)
+├── application/                  # 应用层 (业务用例)
+│   └── service/                  # 应用服务
+│       └── flight_csv_importer.py # 航班数据CSV导入器
+├── infrastructure/               # 基础设施层 (技术实现)
+│   ├── config/                   # 配置管理
+│   │   └── config.py             # 配置类
+│   ├── persistence/              # 持久化
+│   │   └── neo4j/                # Neo4j实现
+│   │       └── neo4j_client.py   # Neo4j数据库客户端
+│   └── service/                  # 外部服务
+│       └── embedding/            # 嵌入服务
+│           └── embedding_service.py # OpenRouter嵌入服务
+├── interface/                    # 接口层 (用户交互)
+│   └── cli/                      # 命令行接口
+│       └── main.py               # CLI入口
+├── data/                         # 数据目录
+│   ├── Flight/                   # 航班数据CSV
+│   └── prd_scenarios.json        # PRD场景模拟数据
+└── src/                          # 旧代码目录 (已废弃，用于参考)
+    ├── config.py
+    ├── neo4j_client.py
+    ├── embedding_service.py
+    ├── data_generator.py
+    ├── vector_indexer.py
+    ├── vector_recall.py
+    └── demo.py
 ```
+
+### 分层架构说明
+
+1. **领域层(Domain)**
+   - 包含核心业务逻辑和业务规则
+   - 不依赖于任何外部技术或框架
+   - 专注于业务问题而非技术实现
+
+2. **应用层(Application)**
+   - 协调领域层的服务来实现业务用例
+   - 处理事务边界和工作流管理
+   - 作为领域层和基础设施层的桥梁
+
+3. **基础设施层(Infrastructure)**
+   - 提供技术实现细节
+   - 包括数据库、外部API、文件系统等
+   - 为上层提供技术支持
+
+4. **接口层(Interface)**
+   - 提供用户交互接口
+   - 包括CLI、Web API、GUI等
+   - 处理输入输出和用户请求
 
 ## 技术细节
 
@@ -405,7 +452,7 @@ MIT License
 
 ---
 
-**最后更新**: 2025-11-22
+**最后更新**: 2025-12-29
 
 **系统版本**: v1.0.0
 

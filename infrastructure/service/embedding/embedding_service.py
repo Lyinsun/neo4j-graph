@@ -5,8 +5,9 @@ from openai import OpenAI
 from typing import List, Union
 import logging
 import time
+import os
 
-from config import Config
+from infrastructure.config.config import Config
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -34,6 +35,15 @@ class EmbeddingService:
             api_key=self.api_key
         )
 
+        # Optional headers for OpenRouter
+        self.extra_headers = {
+            "HTTP-Referer": os.getenv("OPENROUTER_HTTP_REFERER", ""),
+            "X-Title": os.getenv("OPENROUTER_X_TITLE", "")
+        }
+
+        # Filter out empty headers
+        self.extra_headers = {k: v for k, v in self.extra_headers.items() if v}
+
         logger.info(f"Embedding service initialized with model: {self.model}")
 
     def generate_embedding(self, text: str, retry: int = 3) -> List[float]:
@@ -53,10 +63,11 @@ class EmbeddingService:
         for attempt in range(retry):
             try:
                 response = self.client.embeddings.create(
-                    model=self.model,
-                    input=text,
-                    encoding_format="float"
-                )
+                extra_headers=self.extra_headers,
+                model=self.model,
+                input=text,
+                encoding_format="float"
+            )
                 embedding = response.data[0].embedding
                 logger.debug(f"Generated embedding for text: {text[:50]}...")
                 return embedding
@@ -94,6 +105,7 @@ class EmbeddingService:
                 logger.info(f"Processing batch {batch_num}/{total_batches} ({len(batch)} texts)")
 
                 response = self.client.embeddings.create(
+                    extra_headers=self.extra_headers,
                     model=self.model,
                     input=batch,
                     encoding_format="float"

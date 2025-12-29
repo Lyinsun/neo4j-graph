@@ -5,7 +5,7 @@ from neo4j import GraphDatabase
 from typing import List, Dict, Any, Optional
 import logging
 
-from config import Config
+from infrastructure.config.config import Config
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

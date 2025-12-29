@@ -14,8 +14,8 @@ from pathlib import Path
 from typing import Dict, Any
 from datetime import datetime
 
-from neo4j_client import Neo4jClient
-from config import Config
+from infrastructure.persistence.neo4j.neo4j_client import Neo4jClient
+from infrastructure.config.config import Config
 
 logging.basicConfig(
     level=logging.INFO,

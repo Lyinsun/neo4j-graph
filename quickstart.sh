@@ -24,9 +24,9 @@ echo "✓ Dependencies installed"
 echo ""
 
 # Step 2: Verify configuration
+
 echo "[2/3] Verifying configuration..."
-cd src
-python config.py
+python -m infrastructure.config.config
 
 if [ $? -ne 0 ]; then
     echo "Error: Configuration validation failed"
@@ -38,8 +38,10 @@ echo "✓ Configuration validated"
 echo ""
 
 # Step 3: Run demo
+
 echo "[3/3] Starting interactive demo..."
 echo ""
-python demo.py
+echo "Running test insert to verify Neo4j functionality..."
+python -m interface.cli.main test-insert
 
 cd ..

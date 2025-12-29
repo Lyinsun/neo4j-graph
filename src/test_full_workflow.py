@@ -7,12 +7,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 
-from neo4j_client import Neo4jClient
-from embedding_service import EmbeddingService
-from vector_indexer import VectorIndexer
-from vector_recall import VectorRecallSystem, RecallResultFormatter
+from infrastructure.persistence.neo4j.neo4j_client import Neo4jClient
+from infrastructure.service.embedding.embedding_service import EmbeddingService
+from domain.service.vector_indexer import VectorIndexer
+from domain.service.vector_recall import VectorRecallSystem, RecallResultFormatter
 from data_generator import PRDDataGenerator
-from config import Config
+from infrastructure.config.config import Config
 
 def main():
     print("=" * 80)

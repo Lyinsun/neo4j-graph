@@ -6,9 +6,9 @@ import logging
 from typing import List, Dict, Any
 import json
 
-from neo4j_client import Neo4jClient
-from embedding_service import EmbeddingService
-from config import Config
+from infrastructure.persistence.neo4j.neo4j_client import Neo4jClient
+from infrastructure.service.embedding.embedding_service import EmbeddingService
+from infrastructure.config.config import Config
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -17,11 +17,17 @@ logger = logging.getLogger(__name__)
 class VectorIndexer:
     """Manage vector indexes in Neo4j"""
 
-    def __init__(self, neo4j_client: Neo4jClient, embedding_service: EmbeddingService):
+    def __init__(self, neo4j_client: Neo4jClient, embedding_service: EmbeddingService = None):
         self.client = neo4j_client
         self.embedding_service = embedding_service
         self.dimension = Config.EMBEDDING_DIMENSION
         self.similarity_function = Config.VECTOR_SIMILARITY_FUNCTION
+        
+        # Only log if embedding service is provided
+        if embedding_service:
+            logger.info("VectorIndexer initialized with embedding service")
+        else:
+            logger.info("VectorIndexer initialized without embedding service (index operations only)")
 
     def create_vector_index(self, index_name: str, node_label: str, property_name: str) -> bool:
         """
