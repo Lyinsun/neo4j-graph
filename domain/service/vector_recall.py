@@ -181,15 +181,17 @@ class VectorRecallSystem:
         self,
         query_text: str,
         top_k: int = 8,
-        node_label: str = "Ontology"
+        node_label: str = "Ontology",
+        filters: Optional[Dict[str, Any]] = None
     ) -> List[Dict[str, Any]]:
         """
-        Generic knowledge base search for any node type
+        Generic knowledge base search for any node type with optional filters
 
         Args:
             query_text: Query text
             top_k: Number of results to return
             node_label: Node type to search (default: Ontology)
+            filters: Additional filters (version, entity_type, etc.)
 
         Returns:
             list: Relevant nodes with similarity scores
@@ -209,11 +211,23 @@ class VectorRecallSystem:
 
         index_name = index_mapping.get(node_label, f"{node_label.lower()}_name_vector")
 
+        # Build where clauses for filters
+        where_clauses = []
+        if filters:
+            for key, value in filters.items():
+                where_clauses.append(f"node.{key} = '{value}'")
+
         # Dynamic query based on node type
         if node_label == "Ontology":
-            cypher_query = f"""
+            base_query = f"""
             CALL db.index.vector.queryNodes('{index_name}', $k, $embedding)
             YIELD node, score
+            """
+            
+            if where_clauses:
+                base_query += "WHERE " + " AND ".join(where_clauses) + "\n"
+                
+            cypher_query = base_query + f"""
             RETURN 
                 node.name AS name,
                 node.version AS version,
@@ -223,9 +237,15 @@ class VectorRecallSystem:
             LIMIT $k
             """
         elif node_label == "PRD":
-            cypher_query = f"""
+            base_query = f"""
             CALL db.index.vector.queryNodes('{index_name}', $k, $embedding)
             YIELD node, score
+            """
+            
+            if where_clauses:
+                base_query += "WHERE " + " AND ".join(where_clauses) + "\n"
+                
+            cypher_query = base_query + f"""
             RETURN 
                 node.prd_id AS prd_id,
                 node.title AS title,
@@ -235,9 +255,15 @@ class VectorRecallSystem:
             LIMIT $k
             """
         elif node_label == "ReviewComment":
-            cypher_query = f"""
+            base_query = f"""
             CALL db.index.vector.queryNodes('{index_name}', $k, $embedding)
             YIELD node, score
+            """
+            
+            if where_clauses:
+                base_query += "WHERE " + " AND ".join(where_clauses) + "\n"
+                
+            cypher_query = base_query + f"""
             RETURN 
                 node.comment_id AS comment_id,
                 node.content AS content,
@@ -247,9 +273,15 @@ class VectorRecallSystem:
             LIMIT $k
             """
         elif node_label == "RiskAssessment":
-            cypher_query = f"""
+            base_query = f"""
             CALL db.index.vector.queryNodes('{index_name}', $k, $embedding)
             YIELD node, score
+            """
+            
+            if where_clauses:
+                base_query += "WHERE " + " AND ".join(where_clauses) + "\n"
+                
+            cypher_query = base_query + f"""
             RETURN 
                 node.risk_id AS risk_id,
                 node.risk_category AS category,
@@ -261,9 +293,15 @@ class VectorRecallSystem:
             """
         else:
             # Generic query for any other node type
-            cypher_query = f"""
+            base_query = f"""
             CALL db.index.vector.queryNodes('{index_name}', $k, $embedding)
             YIELD node, score
+            """
+            
+            if where_clauses:
+                base_query += "WHERE " + " AND ".join(where_clauses) + "\n"
+                
+            cypher_query = base_query + f"""
             RETURN 
                 node.name AS name,
                 score AS similarity
@@ -348,57 +386,78 @@ class VectorRecallSystem:
     def hybrid_search(
         self,
         query_text: str,
+        node_label: str = "PRD",
         filters: Optional[Dict[str, Any]] = None,
         top_k: int = 10
     ) -> List[Dict[str, Any]]:
         """
-        Advanced: Hybrid search combining vector similarity and filters
+        Advanced: Hybrid search combining vector similarity and filters for any node type
 
         Args:
             query_text: Query text
-            filters: Additional filters (priority, status, etc.)
+            node_label: Node type to search (default: PRD)
+            filters: Additional filters (priority, status, version, etc.)
             top_k: Number of results
 
         Returns:
             list: Search results
         """
-        logger.info(f"Performing hybrid search for: {query_text[:50]}...")
+        logger.info(f"Performing hybrid search on {node_label} for: {query_text[:50]}...")
 
         # Generate embedding
         query_embedding = self.embedding_service.generate_embedding(query_text)
 
+        # Map node types to their vector indexes
+        index_mapping = {
+            "Ontology": "ontology_name_vector",
+            "PRD": "prd_description_vector",
+            "ReviewComment": "review_content_vector",
+            "RiskAssessment": "risk_impact_vector"
+        }
+
+        index_name = index_mapping.get(node_label, f"{node_label.lower()}_name_vector")
+        node_alias = node_label.lower()[:3]  # Short alias for Cypher query
+
         # Build dynamic query
-        cypher_query = """
-        CALL db.index.vector.queryNodes('prd_description_vector', $k * 2, $embedding)
-        YIELD node AS prd, score
+        cypher_query = f"""
+        CALL db.index.vector.queryNodes('{index_name}', $k * 2, $embedding)
+        YIELD node AS {node_alias}, score
         """
 
         # Add filters
         where_clauses = []
         if filters:
-            if 'priority' in filters:
-                where_clauses.append(f"prd.priority = '{filters['priority']}'")
-            if 'status' in filters:
-                where_clauses.append(f"prd.status = '{filters['status']}'")
+            for key, value in filters.items():
+                where_clauses.append(f"{node_alias}.{key} = '{value}'")
 
         if where_clauses:
             cypher_query += "\nWHERE " + " AND ".join(where_clauses)
 
-        cypher_query += """
-        OPTIONAL MATCH (prd)-[:HAS_RECOMMENDATION]->(rec:DecisionRecommendation)
-        OPTIONAL MATCH (prd)-[:HAS_RISK]->(risk:RiskAssessment)
-        WITH prd, score, rec, COUNT(risk) AS risk_count
-        RETURN prd.prd_id AS prd_id,
-               prd.title AS title,
-               prd.description AS description,
-               prd.priority AS priority,
-               prd.status AS status,
-               score AS similarity,
-               rec.decision_type AS decision,
-               risk_count AS num_risks
-        ORDER BY score DESC
-        LIMIT $k
-        """
+        # Add dynamic relationships and return based on node type
+        if node_label == "PRD":
+            cypher_query += f"""
+            OPTIONAL MATCH ({node_alias})-[:HAS_RECOMMENDATION]->(rec:DecisionRecommendation)
+            OPTIONAL MATCH ({node_alias})-[:HAS_RISK]->(risk:RiskAssessment)
+            WITH {node_alias}, score, rec, COUNT(risk) AS risk_count
+            RETURN {node_alias}.prd_id AS prd_id,
+                   {node_alias}.title AS title,
+                   {node_alias}.description AS description,
+                   {node_alias}.priority AS priority,
+                   {node_alias}.status AS status,
+                   score AS similarity,
+                   rec.decision_type AS decision,
+                   risk_count AS num_risks
+            ORDER BY score DESC
+            LIMIT $k
+            """
+        else:
+            # Generic return for other node types
+            cypher_query += f"""
+            RETURN {node_alias}.name AS name,
+                   score AS similarity
+            ORDER BY score DESC
+            LIMIT $k
+            """
 
         try:
             results = self.client.execute_query(

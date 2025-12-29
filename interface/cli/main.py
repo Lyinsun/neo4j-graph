@@ -68,6 +68,19 @@ def vector_recall(args):
     print(f"Performing vector recall for query: {args.query}")
     print(f"Searching for {args.node_label} nodes with top {args.top_k} results")
     
+    # Parse filters if provided
+    filters = None
+    if args.filter:
+        filters = {}
+        for filter_str in args.filter:
+            try:
+                key, value = filter_str.split('=', 1)
+                filters[key] = value
+            except ValueError:
+                print(f"Invalid filter format: {filter_str}. Use 'key=value' format.")
+                return 1
+        print(f"Using filters: {filters}")
+    
     try:
         with Neo4jClient() as client:
             embedding_service = EmbeddingService()
@@ -81,7 +94,12 @@ def vector_recall(args):
             elif args.scenario == "risk_identification":
                 results = recall_system.identify_potential_risks(args.query, args.top_k)
             elif args.scenario == "knowledge_base":
-                results = recall_system.search_knowledge_base(args.query, args.top_k)
+                results = recall_system.search_knowledge_base(
+                    args.query, 
+                    args.top_k, 
+                    args.node_label, 
+                    filters
+                )
             else:
                 print(f"Unknown scenario: {args.scenario}")
                 return 1
@@ -198,6 +216,7 @@ Examples:
     recall_parser.add_argument("--scenario", type=str, default="similar_prds",
                               choices=["similar_prds", "review_suggestions", "risk_identification", "knowledge_base"],
                               help="Recall scenario")
+    recall_parser.add_argument("--filter", type=str, action="append", help="Filter conditions in format 'key=value' (can be used multiple times)")
     recall_parser.set_defaults(func=vector_recall)
     
     # Test insert command
