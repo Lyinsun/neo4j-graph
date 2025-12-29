@@ -15,3 +15,8 @@ numpy>=1.24.0
 
 # Optional: For better CLI experience
 rich>=13.0.0
+
+# FastAPI for HTTP API
+fastapi>=0.104.0
+uvicorn>=0.24.0
+pydantic>=2.0.0
