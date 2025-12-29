@@ -13,13 +13,28 @@ load_dotenv(dotenv_path=env_path)
 class Config:
     """Configuration class for the application"""
 
-    # Neo4j Configuration
-    NEO4J_URI = os.getenv('NEO4J_URI', 'http://10.160.4.92:7474')
-    NEO4J_USER = os.getenv('NEO4J_USER', 'neo4j')
-    NEO4J_PASSWORD = os.getenv('NEO4J_PASSWORD', '818iai818!')
+    # Get Neo4j environment selection from .env file
+    NEO4J_ENV = os.getenv('NEO4J_ENV', 'local').lower()
 
-    # Convert HTTP URL to Bolt protocol
-    NEO4J_BOLT_URI = NEO4J_URI.replace('http://', 'bolt://').replace(':7474', ':7687')
+    # Load configuration based on environment
+    if NEO4J_ENV == 'production':
+        # Production Neo4j Configuration
+        NEO4J_URI = os.getenv('NEO4J_PROD_URI', 'http://10.160.4.92:7474')
+        NEO4J_USER = os.getenv('NEO4J_PROD_USER', 'neo4j')
+        NEO4J_PASSWORD = os.getenv('NEO4J_PROD_PASSWORD', '818iai818!')
+        NEO4J_DATABASE = os.getenv('NEO4J_PROD_DATABASE', '')  # Default database
+    else:
+        # Local Neo4j Configuration (default)
+        NEO4J_URI = os.getenv('NEO4J_LOCAL_URI', 'neo4j://127.0.0.1:7687')
+        NEO4J_USER = os.getenv('NEO4J_LOCAL_USER', 'neo4j')
+        NEO4J_PASSWORD = os.getenv('NEO4J_LOCAL_PASSWORD', '818iai818!')
+        NEO4J_DATABASE = os.getenv('NEO4J_LOCAL_DATABASE', 'deepworld')  # Local database name
+
+    # Convert HTTP URL to Bolt protocol if needed
+    if NEO4J_URI.startswith('http://'):
+        NEO4J_BOLT_URI = NEO4J_URI.replace('http://', 'bolt://').replace(':7474', ':7687')
+    else:
+        NEO4J_BOLT_URI = NEO4J_URI
 
     # OpenRouter Configuration
     OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY')
@@ -56,9 +71,11 @@ class Config:
     def display(cls):
         """Display current configuration (masked sensitive data)"""
         print("=== Configuration ===")
+        print(f"Neo4j Environment: {cls.NEO4J_ENV}")
         print(f"Neo4j URI: {cls.NEO4J_BOLT_URI}")
         print(f"Neo4j User: {cls.NEO4J_USER}")
         print(f"Neo4j Password: {'*' * len(cls.NEO4J_PASSWORD)}")
+        print(f"Neo4j Database: {cls.NEO4J_DATABASE if cls.NEO4J_DATABASE else 'default'}")
         print(f"OpenRouter API Key: {cls.OPENROUTER_API_KEY[:20]}...{cls.OPENROUTER_API_KEY[-10:] if cls.OPENROUTER_API_KEY else 'NOT SET'}")
         print(f"Embedding Model: {cls.EMBEDDING_MODEL}")
         print(f"Embedding Dimension: {cls.EMBEDDING_DIMENSION}")
