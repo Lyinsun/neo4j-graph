@@ -1,0 +1,47 @@
+relationshipType,relationshipName,sourceObject,targetObject,direction,cardinality,required,version,description
+INHERITANCE,belongsto,O_Asset,O_Object,-,-,-,Flight-0.41,O_Asset继承自O_Object根对象
+INHERITANCE,belongsto,O_Airport,O_Asset,-,-,-,Flight-0.41,O_Airport继承自O_Asset资产基类
+INHERITANCE,belongsto,O_Runway,O_Asset,-,-,-,Flight-0.41,O_Runway继承自O_Asset资产基类
+INHERITANCE,belongsto,O_Gate,O_Asset,-,-,-,Flight-0.41,O_Gate继承自O_Asset资产基类
+INHERITANCE,belongsto,O_ParkingStand,O_Asset,-,-,-,Flight-0.41,O_ParkingStand继承自O_Asset资产基类
+INHERITANCE,belongsto,O_Aircraft,O_Asset,-,-,-,Flight-0.41,O_Aircraft继承自O_Asset资产基类
+INHERITANCE,belongsto,O_Actor,O_Object,-,-,-,Flight-0.41,O_Actor继承自O_Object根对象
+INHERITANCE,belongsto,O_Tower,O_Actor,-,-,-,Flight-0.41,O_Tower继承自O_Actor行为主体基类
+INHERITANCE,belongsto,O_ATCUnit,O_Actor,-,-,-,Flight-0.41,O_ATCUnit继承自O_Actor行为主体基类
+INHERITANCE,belongsto,O_ExternalSystem,O_Actor,-,-,-,Flight-0.41,O_ExternalSystem继承自O_Actor行为主体基类
+INHERITANCE,belongsto,O_FlightPlan,O_Object,-,-,-,Flight-0.41,O_FlightPlan继承自O_Object根对象
+INHERITANCE,belongsto,O_Flight,O_Object,-,-,-,Flight-0.41,O_Flight继承自O_Object根对象
+INHERITANCE,belongsto,O_Event,O_Object,-,-,-,Flight-0.41,O_Event继承自O_Object根对象
+INHERITANCE,belongsto,O_FlightDelayedEvent,O_Event,-,-,-,Flight-0.41,O_FlightDelayedEvent继承自O_Event事件基类
+INHERITANCE,belongsto,O_FlightPlanChangedEvent,O_Event,-,-,-,Flight-0.41,O_FlightPlanChangedEvent继承自O_Event事件基类
+INHERITANCE,belongsto,O_FlightDepartureEvent,O_Event,-,-,-,Flight-0.41,O_FlightDepartureEvent继承自O_Event事件基类
+INHERITANCE,belongsto,O_FlightArrivalEvent,O_Event,-,-,-,Flight-0.41,O_FlightArrivalEvent继承自O_Event事件基类
+INHERITANCE,belongsto,O_ResourceConflictEvent,O_Event,-,-,-,Flight-0.41,O_ResourceConflictEvent继承自O_Event事件基类
+INHERITANCE,belongsto,O_GateReassignedEvent,O_Event,-,-,-,Flight-0.41,O_GateReassignedEvent继承自O_Event事件基类
+INHERITANCE,belongsto,O_RunwayClosedEvent,O_Event,-,-,-,Flight-0.41,O_RunwayClosedEvent继承自O_Event事件基类
+LINK,UsesGate_LT,O_Flight,O_Gate,Flight→Gate,1:0..1,Optional,Flight-0.41,"描述运行航班与登机口的使用关系。在现实世界中对应航班在地面阶段占用特定登机口进行旅客登离机操作，一个航班在同一时刻最多使用一个登机口，登机口可以被多个航班在不同时间段使用。该关系受时间窗口约束，同一登机口不可在重叠时间段内被多个航班占用。"
+LINK,UsesRunway_LT,O_Flight,O_Runway,Flight→Runway,1:1,Required,Flight-0.41,"描述航班在起飞或降落阶段与跑道的使用关系。在现实世界中对应飞机在起飞离地或降落接地时占用跑道的事实，每次起飞或降落必须指定一条跑道，跑道使用必须满足最小安全间隔（Wake Turbulence尾流间隔），该关系具有瞬时性和排他性。"
+LINK,ParkedAt_LT,O_Flight,O_ParkingStand,Flight→Stand,1:0..1,Optional,Flight-0.41,"描述航班在地面阶段与停机位的占用关系。在现实世界中对应飞机在航站楼或停机坪指定区域停放的事实，用于过站、装卸、维护等地面保障作业，机位分配受飞机型号限制，一个航班在地面阶段占用一个机位，该关系在航班到达后建立、起飞前释放。"
+LINK,AssignedTo_LT,O_Aircraft,O_Flight,Aircraft→Flight,1:N,Required,Flight-0.41,"描述飞机实体与其执行的航班实例的分配关系。在现实世界中对应特定注册号的飞机在某一天执行特定航班任务的事实，一架飞机可以在一天内执行多个航班（轮转），但同一时刻只能执行一个航班，后续航班的起飞时间必须晚于前序航班到达时间加最小过站时间（Turnaround Time）。"
+LINK,OriginAirport_LT,O_Flight,O_Airport,Flight→Airport,1:1,Required,Flight-0.41,"描述航班的起飞机场归属关系。在现实世界中对应航班从哪个机场起飞的固有属性，每个航班有且仅有一个起飞机场，该关系在航班创建时确定且通常不变更。"
+LINK,DestinationAirport_LT,O_Flight,O_Airport,Flight→Airport,1:1,Required,Flight-0.41,"描述航班的目的地机场归属关系。在现实世界中对应航班计划降落的机场，每个航班有且仅有一个目的地机场，该关系在航班创建时确定，除非发生备降或返航等特殊情况。"
+LINK,InvolvesFlight_LT,O_Event,O_Flight,Event→Flight,N:1,Required,Flight-0.41,"描述事件对象与其影响的航班实体的关联关系。在现实世界中对应事件发生时作用于哪个航班的语义，如延误事件涉及某航班、计划变更事件影响某航班，一个事件通常涉及一个航班，一个航班可能产生多个事件，该关系是事件驱动模型的核心语义连接。"
+LINK,OccursAtAirport_LT,O_Event,O_Airport,Event→Airport,N:1,Optional,Flight-0.41,"描述事件发生的地理位置归属。在现实世界中对应事件在哪个机场范围内发生，如跑道关闭事件、资源冲突事件等，该关系用于按机场过滤和统计事件，支持多机场协同场景下的事件分发。"
+LINK,UsesResource_LT,O_Event,O_Asset,Event→Asset,N:1,Optional,Flight-0.41,"描述事件与其涉及的资产实体的关联关系。在现实世界中对应资源相关事件（如资源冲突、登机口变更、跑道关闭）与具体资源的绑定关系，该关系明确了事件的作用对象，支持基于资源的事件查询和影响分析。"
+LINK,ReportedBy_LT,O_Event,O_ExternalSystem,Event→System,N:1,Required,Flight-0.41,"描述事件的来源系统归属。在现实世界中对应事件由哪个业务系统检测并上报的事实，如AODB系统上报延误事件、CDM系统上报时刻变更事件，该关系用于追溯事件来源、验证数据权威性、建立系统间数据溯源。"
+LINK,ManagesRunway_LT,O_Airport,O_Runway,Airport→Runway,1:N,-,Flight-0.41,"描述机场对其跑道设施的管理归属关系。在现实世界中对应机场基础设施的组织结构，一个机场管理多条跑道，每条跑道归属唯一机场，该关系支持按机场查询可用跑道、计算机场容量等功能。"
+LINK,ManagesGate_LT,O_Airport,O_Gate,Airport→Gate,1:N,-,Flight-0.41,"描述机场对登机口设施的管理归属关系。在现实世界中对应航站楼登机口的归属结构，支持按机场或航站楼查询登机口、分配航班登机口等功能。"
+LINK,ManagesStand_LT,O_Airport,O_ParkingStand,Airport→Stand,1:N,-,Flight-0.41,"描述机场对停机位设施的管理归属关系。在现实世界中对应机场停机坪区域的组织结构，支持机位资源的层级管理和容量计算。"
+LINK,ControlsRunway_LT,O_Tower,O_Runway,Tower→Runway,1:N,-,Flight-0.41,"描述塔台对跑道的管制权限关系。在现实世界中对应塔台管制单位负责特定跑道的起降指挥职责，该关系明确了管制责任分区，支持跑道使用许可的审批流程和通知机制。"
+LINK,ManagesFlight_LT,O_ATCUnit,O_Flight,ATCUnit→Flight,1:N,-,Flight-0.41,"描述管制单元对航班的管辖关系。在现实世界中对应进近、离场、航路管制单位在特定空域或阶段对航班的管制责任，该关系支持按管制扇区分配航班、协调移交等功能。"
+LINK,ProducesEvent_LT,O_ExternalSystem,O_Event,System→Event,1:N,-,Flight-0.41,"描述外部系统产生事件的能力关系。在现实世界中对应业务系统作为事件源向知识图谱持续推送事件数据的机制，该关系明确了系统的事件生产职责，支持事件流的路由和溯源。"
+ACTION,NotifyTower_AT,O_FlightDelayedEvent,O_Tower,Event→Tower,-,-,Flight-0.41,"描述航班延误事件触发向塔台发送通知的动作。在现实业务流程中，当航班延误超过一定阈值（如15分钟）时，系统自动向塔台管制单位推送延误信息，包含航班号、延误时长、延误原因，使塔台提前调整起降时刻排序和跑道使用计划。该动作更新航班状态为Delayed，记录延误分钟数，具备幂等性避免重复通知。"
+ACTION,CheckGateConflict_AT,O_FlightDelayedEvent,O_Gate,Event→Gate,-,-,Flight-0.41,"描述航班延误事件触发登机口冲突检测的动作。在现实业务流程中，延误导致航班地面时间延长，可能与后续航班的登机口使用时间窗口重叠，系统自动检查延误后的新时间范围是否与其他航班冲突，若检测到时间重叠则触发ResourceConflictEvent，启动登机口重新分配流程。"
+ACTION,UpdatePlan_AT,O_FlightPlanChangedEvent,O_FlightPlan,Event→Plan,-,-,Flight-0.41,"描述航班计划变更事件触发计划对象更新的动作。在现实业务流程中，当航空公司或机场调整航班时刻表时，系统将新的STD/STA写入计划层对象，更新planStatus为Updated状态，同时记录变更历史用于审计，该动作是计划层数据维护的核心机制。"
+ACTION,SyncToFlight_AT,O_FlightPlanChangedEvent,O_Flight,Event→Flight,-,-,Flight-0.41,"描述航班计划变更同步到执行层的动作。在现实业务流程中，计划层的时间调整需要传播到当天已创建的执行层航班实例，系统检查执行层航班是否存在，若存在则同步更新STD/STA/ETD/ETA等时间字段，保持计划层与执行层的一致性，该动作是双层模型同步的关键环节。"
+ACTION,ReassignGate_AT,O_ResourceConflictEvent,O_Flight,Event→Flight,-,-,Flight-0.41,"描述资源冲突事件触发登机口重新分配的动作。在现实业务流程中，当检测到登机口时间冲突时，系统按照优先级规则（如远近期航班、宽窄体机型、航司优先级）自动或半自动重新分配可用登机口，更新航班的gateId字段，同时触发GateReassignedEvent通知地面保障单位和旅客，该动作是资源冲突解决的核心机制。"
+ACTION,AlertConflict_AT,O_ResourceConflictEvent,O_Tower,Event→Tower,-,-,Flight-0.41,"描述资源冲突事件触发告警通知的动作。在现实业务流程中，当资源分配出现冲突且无法自动解决时，系统向塔台或调度中心发送告警消息，包含冲突类型、涉及航班、冲突时间段等详细信息，支持人工介入决策，该动作是异常升级处理的机制。"
+ACTION,UpdateStatus_Departed_AT,O_FlightDepartureEvent,O_Flight,Event→Flight,-,-,Flight-0.41,"描述航班起飞事件触发航班状态更新为已起飞的动作。在现实业务流程中，当ADS-B或塔台系统上报飞机起飞事实时，系统将航班状态从Active迁移到Departed，记录实际起飞时间ATD，该状态迁移触发一系列后续动作如释放登机口、更新跑道占用、通知后续航班等，是航班状态机的关键迁移节点。"
+ACTION,ReleaseGate_AT,O_FlightDepartureEvent,O_Gate,Event→Gate,-,-,Flight-0.41,"描述航班起飞后释放登机口资源的动作。在现实业务流程中，起飞航班在离开登机口滑出后，系统将对应登机口状态从Occupied更新为Available，使该登机口可以被分配给后续到达航班使用，该动作是资源动态分配的核心环节，直接影响机场容量和周转效率。"
+ACTION,UpdateStatus_Arrived_AT,O_FlightArrivalEvent,O_Flight,Event→Flight,-,-,Flight-0.41,"描述航班到达事件触发航班状态更新为已到达的动作。在现实业务流程中，当飞机降落并滑行至机位完成停靠时，系统将航班状态从Departed迁移到Arrived，记录实际到达时间ATA和挡轮挡时间BlockTime，该状态迁移标志航班执行结束，触发后续的过站保障流程。"
+ACTION,ReleaseRunway_AT,O_FlightArrivalEvent,O_Runway,Event→Runway,-,-,Flight-0.41,"描述航班降落后释放跑道资源的动作。在现实业务流程中，降落航班脱离跑道后，系统将跑道状态从Occupied更新为Available，使跑道可以被下一架航班使用，该动作受Wake Turbulence尾流间隔约束，必须满足最小时间间隔后才能释放，是跑道容量管理的关键机制。"

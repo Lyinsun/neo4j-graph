@@ -41,8 +41,8 @@ class Config:
     OPENROUTER_BASE_URL = os.getenv('OPENROUTER_BASE_URL', 'https://openrouter.ai/api/v1')
 
     # Embedding Model Configuration
-    EMBEDDING_MODEL = 'openai/text-embedding-3-small'
-    EMBEDDING_DIMENSION = 1536
+    EMBEDDING_MODEL = 'qwen/qwen3-embedding-8b'
+    EMBEDDING_DIMENSION = 4096
 
     # Vector Index Configuration
     VECTOR_SIMILARITY_FUNCTION = 'cosine'

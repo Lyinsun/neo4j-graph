@@ -31,7 +31,7 @@ class VectorIndexer:
 
     def create_vector_index(self, index_name: str, node_label: str, property_name: str) -> bool:
         """
-        Create a vector index
+        Create a vector index for nodes
 
         Args:
             index_name: Name of the vector index
@@ -58,6 +58,37 @@ class VectorIndexer:
             return True
         except Exception as e:
             logger.error(f"✗ Failed to create vector index '{index_name}': {e}")
+            return False
+
+    def create_relationship_vector_index(self, index_name: str, relationship_type: str, property_name: str) -> bool:
+        """
+        Create a vector index for relationships
+
+        Args:
+            index_name: Name of the vector index
+            relationship_type: Relationship type to index (e.g., INHERITANCE, LINK, ACTION)
+            property_name: Property containing the vector
+
+        Returns:
+            bool: True if successful
+        """
+        query = f"""
+        CREATE VECTOR INDEX `{index_name}` IF NOT EXISTS
+        FOR ()-[r:{relationship_type}]-() ON (r.{property_name})
+        OPTIONS {{
+          indexConfig: {{
+            `vector.dimensions`: {self.dimension},
+            `vector.similarity_function`: '{self.similarity_function}'
+          }}
+        }}
+        """
+
+        try:
+            self.client.execute_write(query)
+            logger.info(f"✓ Relationship vector index '{index_name}' created successfully")
+            return True
+        except Exception as e:
+            logger.error(f"✗ Failed to create relationship vector index '{index_name}': {e}")
             return False
 
     def create_all_indexes(self) -> Dict[str, bool]:
