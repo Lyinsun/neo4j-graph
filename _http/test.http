@@ -1,0 +1,90 @@
+### Health Check
+GET http://localhost:8001/health
+
+###
+
+### 生成并存储 Embedding - OntologyClass (Flight-0.41)
+POST http://localhost:8001/embedding/generate-and-store
+Content-Type: application/json
+
+{
+  "node_label": "OntologyClass",
+  "source_property": "description",
+  "target_property": "description_embedding",
+  "batch_size": 20,
+  "filters": {
+    "version": "Flight-0.41"
+  }
+}
+
+###
+
+### 生成并存储 Embedding - 不带过滤条件
+POST http://localhost:8001/embedding/generate-and-store
+Content-Type: application/json
+
+{
+  "node_label": "OntologyClass",
+  "source_property": "name",
+  "target_property": "name_embedding",
+  "batch_size": 20
+}
+
+###
+
+### 单个文本生成 Embedding
+POST http://localhost:8001/embedding/generate
+Content-Type: application/json
+
+{
+  "text": "航班延误处理流程"
+}
+
+###
+
+### 批量文本生成 Embedding
+POST http://localhost:8001/embedding/batch
+Content-Type: application/json
+
+{
+  "texts": [
+    "机场协同决策系统",
+    "航班运行保障",
+    "飞行计划管理"
+  ],
+  "batch_size": 10
+}
+
+###
+
+### 知识库召回 - Ontology节点
+POST http://localhost:8001/recall/knowledge-base
+Content-Type: application/json
+
+{
+  "query_text": "航班延误处理",
+  "node_label": "Ontology",
+  "top_k": 5,
+  "filters": {
+    "version": "Flightv0_4"
+  }
+}
+
+###
+
+### 创建向量索引
+POST http://localhost:8001/index/create
+Content-Type: application/json
+
+{
+  "index_name": "ontology_class_description_vector",
+  "node_label": "OntologyClass",
+  "property_name": "description_embedding"
+}
+
+###
+
+### 列出所有向量索引
+GET http://localhost:8001/index/list
+
+###

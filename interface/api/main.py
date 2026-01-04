@@ -140,6 +140,29 @@ class BatchEmbeddingRequest(BaseModel):
     batch_size: int = 20
 
 
+class GenerateAndStoreEmbeddingRequest(BaseModel):
+    """
+    Request model for generating embeddings and storing them in the database
+    """
+    node_label: str  # 节点标签，如 "Ontology", "PRD" 等
+    source_property: str = "description"  # 源文本字段
+    target_property: str = "description_embedding"  # 目标embedding字段
+    batch_size: int = 20  # 批处理大小
+    filters: Optional[Dict[str, Any]] = None  # 可选的过滤条件
+
+
+class GenerateAndStoreEmbeddingResponse(BaseModel):
+    """
+    Response model for generate and store embedding operation
+    """
+    success: bool
+    message: str
+    total_nodes: int
+    processed_nodes: int
+    failed_nodes: int
+    embedding_dimension: int
+
+
 # Health check endpoint
 @app.get("/health", tags=["system"])
 async def health_check():
@@ -294,10 +317,10 @@ async def generate_embedding(request: EmbeddingRequest):
 async def generate_batch_embeddings(request: BatchEmbeddingRequest):
     """
     Generate embeddings for multiple texts in batch
-    
+
     Args:
         request: Batch embedding request parameters
-    
+
     Returns:
         List of embeddings and metadata
     """
@@ -305,7 +328,7 @@ async def generate_batch_embeddings(request: BatchEmbeddingRequest):
         recall_system = get_recall_system()
         # Directly use the embedding service from recall system
         embeddings = recall_system.embedding_service.generate_embeddings_batch(
-            request.texts, 
+            request.texts,
             batch_size=request.batch_size
         )
         return {
@@ -317,6 +340,112 @@ async def generate_batch_embeddings(request: BatchEmbeddingRequest):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Batch embedding generation failed: {str(e)}")
+
+
+@app.post("/embedding/generate-and-store", response_model=GenerateAndStoreEmbeddingResponse, tags=["embedding"])
+async def generate_and_store_embeddings(request: GenerateAndStoreEmbeddingRequest):
+    """
+    Generate embeddings for nodes and store them in the database
+
+    This endpoint will:
+    1. Query nodes by label and optional filters
+    2. Extract the source property (e.g., "description")
+    3. Generate embeddings in batches
+    4. Update nodes with the embeddings in the target property
+
+    Args:
+        request: Generate and store embedding request parameters
+
+    Returns:
+        Statistics about the embedding generation and storage process
+    """
+    try:
+        recall_system = get_recall_system()
+        neo4j_client = recall_system.client
+        embedding_service = recall_system.embedding_service
+
+        # 1. Build query to get nodes
+        conditions = [f"n.{request.source_property} IS NOT NULL"]
+        if request.filters:
+            filter_conditions = [f"n.{key} = ${key}" for key in request.filters.keys()]
+            conditions.extend(filter_conditions)
+
+        where_clause = "WHERE " + " AND ".join(conditions)
+
+        query = f"""
+        MATCH (n:{request.node_label})
+        {where_clause}
+        RETURN id(n) as node_id, n.{request.source_property} as text
+        """
+
+        # Execute query with filters as parameters
+        results = neo4j_client.execute_query(query, request.filters or {})
+
+        if not results:
+            return GenerateAndStoreEmbeddingResponse(
+                success=True,
+                message=f"No {request.node_label} nodes found with {request.source_property} property",
+                total_nodes=0,
+                processed_nodes=0,
+                failed_nodes=0,
+                embedding_dimension=0
+            )
+
+        total_nodes = len(results)
+
+        # 2. Extract texts and node IDs
+        texts = [result['text'] for result in results]
+        node_ids = [result['node_id'] for result in results]
+
+        # 3. Generate embeddings in batches
+        embeddings = embedding_service.generate_embeddings_batch(
+            texts,
+            batch_size=request.batch_size
+        )
+
+        if not embeddings:
+            raise HTTPException(
+                status_code=500,
+                detail="Failed to generate embeddings"
+            )
+
+        # 4. Update nodes with embeddings
+        update_query = f"""
+        UNWIND $data AS item
+        MATCH (n:{request.node_label})
+        WHERE id(n) = item.node_id
+        SET n.{request.target_property} = item.embedding
+        RETURN count(n) as updated_count
+        """
+
+        data = [
+            {"node_id": node_id, "embedding": embedding}
+            for node_id, embedding in zip(node_ids, embeddings)
+        ]
+
+        update_result = neo4j_client.execute_query(update_query, {"data": data})
+        processed_nodes = update_result[0]['updated_count'] if update_result else 0
+        failed_nodes = total_nodes - processed_nodes
+
+        # 5. Return results
+        return GenerateAndStoreEmbeddingResponse(
+            success=True,
+            message=f"Successfully generated and stored embeddings for {processed_nodes}/{total_nodes} {request.node_label} nodes",
+            total_nodes=total_nodes,
+            processed_nodes=processed_nodes,
+            failed_nodes=failed_nodes,
+            embedding_dimension=len(embeddings[0]) if embeddings else 0
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to generate and store embeddings: {str(e)}"
+        )
 
 
 # Vector Index Management endpoints
@@ -416,7 +545,7 @@ if __name__ == "__main__":
     uvicorn.run(
         "interface.api.main:app",
         host="0.0.0.0",
-        port=8010,
+        port=8001,
         reload=True,
         log_level="info"
     )

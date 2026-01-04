@@ -27,9 +27,9 @@ pip install -r requirements.txt
 
 # Start FastAPI server
 echo "Starting FastAPI server..."
-echo "Server will be available at: http://0.0.0.0:8000"
-echo "API documentation: http://0.0.0.0:8000/docs"
-echo "Redoc documentation: http://0.0.0.0:8000/redoc"
+echo "Server will be available at: http://0.0.0.0:8001"
+echo "API documentation: http://0.0.0.0:8001/docs"
+echo "Redoc documentation: http://0.0.0.0:8001/redoc"
 echo "-" * 50
 
-uvicorn interface.api.main:app --host 0.0.0.0 --port 8000 --reload
+uvicorn interface.api.main:app --host 0.0.0.0 --port 8001 --reload
