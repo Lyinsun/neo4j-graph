@@ -1,13 +1,19 @@
 #!/bin/bash
 
+# Get the project root directory (parent of scripts/)
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$PROJECT_ROOT"
+
 echo "╔══════════════════════════════════════════════════════════════╗"
-echo "║   PRD Review Vector Recall System - Quick Start             ║"
+echo "║   Neo4j Graph Vector Recall System - Quick Start            ║"
 echo "╚══════════════════════════════════════════════════════════════╝"
+echo ""
+echo "Project root: $PROJECT_ROOT"
 echo ""
 
 # Check if we're in the right directory
 if [ ! -f "requirements.txt" ]; then
-    echo "Error: Please run this script from the neo4j directory"
+    echo "Error: requirements.txt not found in project root"
     exit 1
 fi
 
@@ -44,4 +50,13 @@ echo ""
 echo "Running test insert to verify Neo4j functionality..."
 python -m interface.cli.main test-insert
 
-cd ..
+echo ""
+echo "╔══════════════════════════════════════════════════════════════╗"
+echo "║   Quick Start Complete!                                      ║"
+echo "╚══════════════════════════════════════════════════════════════╝"
+echo ""
+echo "Next steps:"
+echo "  1. Start API server: ./scripts/start_api.sh"
+echo "  2. Import data: python -m interface.cli.main import-flight --data-dir data/Flight"
+echo "  3. View API docs: http://localhost:8000/docs"
+echo ""

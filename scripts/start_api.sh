@@ -2,8 +2,13 @@
 
 # Start FastAPI server for Vector Recall System API
 
+# Get the project root directory (parent of scripts/)
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$PROJECT_ROOT"
+
 echo "Starting Vector Recall System API..."
-echo "-" * 50
+echo "Project root: $PROJECT_ROOT"
+echo "=================================================="
 
 # Check if virtual environment exists
 if [ ! -d ".venv" ]; then
