@@ -143,8 +143,11 @@ class BatchEmbeddingRequest(BaseModel):
 class GenerateAndStoreEmbeddingRequest(BaseModel):
     """
     Request model for generating embeddings and storing them in the database
+    Supports both nodes and relationships
     """
-    node_label: str  # 节点标签，如 "Ontology", "PRD" 等
+    element_type: str = "node"  # "node" 或 "relationship"
+    node_label: Optional[str] = None  # 节点标签，如 "OntologyClass" (element_type="node" 时必需)
+    relationship_type: Optional[str] = None  # 关系类型，如 "INHERITANCE", "LINK" (element_type="relationship" 时必需)
     source_property: str = "description"  # 源文本字段
     target_property: str = "description_embedding"  # 目标embedding字段
     batch_size: int = 20  # 批处理大小
@@ -345,13 +348,17 @@ async def generate_batch_embeddings(request: BatchEmbeddingRequest):
 @app.post("/embedding/generate-and-store", response_model=GenerateAndStoreEmbeddingResponse, tags=["embedding"])
 async def generate_and_store_embeddings(request: GenerateAndStoreEmbeddingRequest):
     """
-    Generate embeddings for nodes and store them in the database
+    Generate embeddings for nodes or relationships and store them in the database
 
-    This endpoint will:
-    1. Query nodes by label and optional filters
+    This endpoint supports both nodes and relationships:
+    - For nodes: specify element_type="node" and node_label
+    - For relationships: specify element_type="relationship" and relationship_type
+
+    Steps:
+    1. Query elements by type and optional filters
     2. Extract the source property (e.g., "description")
     3. Generate embeddings in batches
-    4. Update nodes with the embeddings in the target property
+    4. Update elements with the embeddings in the target property
 
     Args:
         request: Generate and store embedding request parameters
@@ -364,19 +371,55 @@ async def generate_and_store_embeddings(request: GenerateAndStoreEmbeddingReques
         neo4j_client = recall_system.client
         embedding_service = recall_system.embedding_service
 
-        # 1. Build query to get nodes
-        conditions = [f"n.{request.source_property} IS NOT NULL"]
-        if request.filters:
-            filter_conditions = [f"n.{key} = ${key}" for key in request.filters.keys()]
-            conditions.extend(filter_conditions)
+        # 1. Build query based on element type
+        if request.element_type == "node":
+            # Node query
+            conditions = [f"e.{request.source_property} IS NOT NULL"]
+            if request.filters:
+                filter_conditions = [f"e.{key} = ${key}" for key in request.filters.keys()]
+                conditions.extend(filter_conditions)
 
-        where_clause = "WHERE " + " AND ".join(conditions)
+            where_clause = "WHERE " + " AND ".join(conditions)
 
-        query = f"""
-        MATCH (n:{request.node_label})
-        {where_clause}
-        RETURN id(n) as node_id, n.{request.source_property} as text
-        """
+            # 如果提供了 node_label，使用标签过滤；否则匹配所有节点
+            if request.node_label:
+                query = f"""
+                MATCH (e:{request.node_label})
+                {where_clause}
+                RETURN id(e) as element_id, e.{request.source_property} as text, labels(e) as labels
+                """
+                element_name = request.node_label
+            else:
+                query = f"""
+                MATCH (e)
+                {where_clause}
+                RETURN id(e) as element_id, e.{request.source_property} as text, labels(e) as labels
+                """
+                element_name = "all nodes"
+        else:
+            # Relationship query
+            conditions = [f"e.{request.source_property} IS NOT NULL"]
+            if request.filters:
+                filter_conditions = [f"e.{key} = ${key}" for key in request.filters.keys()]
+                conditions.extend(filter_conditions)
+
+            where_clause = "WHERE " + " AND ".join(conditions)
+
+            # 如果提供了 relationship_type，使用类型过滤；否则匹配所有关系
+            if request.relationship_type:
+                query = f"""
+                MATCH ()-[e:{request.relationship_type}]->()
+                {where_clause}
+                RETURN id(e) as element_id, e.{request.source_property} as text, type(e) as rel_type
+                """
+                element_name = request.relationship_type
+            else:
+                query = f"""
+                MATCH ()-[e]->()
+                {where_clause}
+                RETURN id(e) as element_id, e.{request.source_property} as text, type(e) as rel_type
+                """
+                element_name = "all relationships"
 
         # Execute query with filters as parameters
         results = neo4j_client.execute_query(query, request.filters or {})
@@ -384,18 +427,18 @@ async def generate_and_store_embeddings(request: GenerateAndStoreEmbeddingReques
         if not results:
             return GenerateAndStoreEmbeddingResponse(
                 success=True,
-                message=f"No {request.node_label} nodes found with {request.source_property} property",
+                message=f"No {element_name} {request.element_type}s found with {request.source_property} property",
                 total_nodes=0,
                 processed_nodes=0,
                 failed_nodes=0,
                 embedding_dimension=0
             )
 
-        total_nodes = len(results)
+        total_elements = len(results)
 
-        # 2. Extract texts and node IDs
+        # 2. Extract texts and element IDs
         texts = [result['text'] for result in results]
-        node_ids = [result['node_id'] for result in results]
+        element_ids = [result['element_id'] for result in results]
 
         # 3. Generate embeddings in batches
         embeddings = embedding_service.generate_embeddings_batch(
@@ -409,31 +452,58 @@ async def generate_and_store_embeddings(request: GenerateAndStoreEmbeddingReques
                 detail="Failed to generate embeddings"
             )
 
-        # 4. Update nodes with embeddings
-        update_query = f"""
-        UNWIND $data AS item
-        MATCH (n:{request.node_label})
-        WHERE id(n) = item.node_id
-        SET n.{request.target_property} = item.embedding
-        RETURN count(n) as updated_count
-        """
+        # 4. Update elements with embeddings
+        if request.element_type == "node":
+            if request.node_label:
+                update_query = f"""
+                UNWIND $data AS item
+                MATCH (e:{request.node_label})
+                WHERE id(e) = item.element_id
+                SET e.{request.target_property} = item.embedding
+                RETURN count(e) as updated_count
+                """
+            else:
+                update_query = f"""
+                UNWIND $data AS item
+                MATCH (e)
+                WHERE id(e) = item.element_id
+                SET e.{request.target_property} = item.embedding
+                RETURN count(e) as updated_count
+                """
+        else:
+            if request.relationship_type:
+                update_query = f"""
+                UNWIND $data AS item
+                MATCH ()-[e:{request.relationship_type}]->()
+                WHERE id(e) = item.element_id
+                SET e.{request.target_property} = item.embedding
+                RETURN count(e) as updated_count
+                """
+            else:
+                update_query = f"""
+                UNWIND $data AS item
+                MATCH ()-[e]->()
+                WHERE id(e) = item.element_id
+                SET e.{request.target_property} = item.embedding
+                RETURN count(e) as updated_count
+                """
 
         data = [
-            {"node_id": node_id, "embedding": embedding}
-            for node_id, embedding in zip(node_ids, embeddings)
+            {"element_id": element_id, "embedding": embedding}
+            for element_id, embedding in zip(element_ids, embeddings)
         ]
 
         update_result = neo4j_client.execute_query(update_query, {"data": data})
-        processed_nodes = update_result[0]['updated_count'] if update_result else 0
-        failed_nodes = total_nodes - processed_nodes
+        processed_elements = update_result[0]['updated_count'] if update_result else 0
+        failed_elements = total_elements - processed_elements
 
         # 5. Return results
         return GenerateAndStoreEmbeddingResponse(
             success=True,
-            message=f"Successfully generated and stored embeddings for {processed_nodes}/{total_nodes} {request.node_label} nodes",
-            total_nodes=total_nodes,
-            processed_nodes=processed_nodes,
-            failed_nodes=failed_nodes,
+            message=f"Successfully generated and stored embeddings for {processed_elements}/{total_elements} {element_name} {request.element_type}s",
+            total_nodes=total_elements,
+            processed_nodes=processed_elements,
+            failed_nodes=failed_elements,
             embedding_dimension=len(embeddings[0]) if embeddings else 0
         )
 

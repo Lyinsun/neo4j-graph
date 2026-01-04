@@ -24,10 +24,77 @@ POST http://localhost:8001/embedding/generate-and-store
 Content-Type: application/json
 
 {
+  "element_type": "node",
   "node_label": "OntologyClass",
   "source_property": "name",
   "target_property": "name_embedding",
   "batch_size": 20
+}
+
+###
+
+### 生成并存储 Embedding - 所有节点（按属性过滤）
+POST http://localhost:8001/embedding/generate-and-store
+Content-Type: application/json
+
+{
+  "element_type": "node",
+  "source_property": "description",
+  "target_property": "description_embedding",
+  "batch_size": 20,
+  "filters": {
+    "version": "Flight-0.41"
+  }
+}
+
+###
+
+### 生成并存储 Embedding - 所有关系（按属性过滤）
+POST http://localhost:8001/embedding/generate-and-store
+Content-Type: application/json
+
+{
+  "element_type": "relationship",
+  "source_property": "description",
+  "target_property": "description_embedding",
+  "batch_size": 20,
+  "filters": {
+    "version": "Flight-0.41"
+  }
+}
+
+###
+
+### 生成并存储 Embedding - 指定关系类型 (LINK)
+POST http://localhost:8001/embedding/generate-and-store
+Content-Type: application/json
+
+{
+  "element_type": "relationship",
+  "relationship_type": "LINK",
+  "source_property": "description",
+  "target_property": "description_embedding",
+  "batch_size": 20,
+  "filters": {
+    "version": "Flight-0.41"
+  }
+}
+
+###
+
+### 生成并存储 Embedding - 指定关系类型 (INHERITANCE)
+POST http://localhost:8001/embedding/generate-and-store
+Content-Type: application/json
+
+{
+  "element_type": "relationship",
+  "relationship_type": "INHERITANCE",
+  "source_property": "description",
+  "target_property": "description_embedding",
+  "batch_size": 20,
+  "filters": {
+    "version": "Flight-0.41"
+  }
 }
 
 ###
