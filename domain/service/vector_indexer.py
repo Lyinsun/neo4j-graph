@@ -29,6 +29,57 @@ class VectorIndexer:
         else:
             logger.info("VectorIndexer initialized without embedding service (index operations only)")
 
+    @staticmethod
+    def normalize_index_name(label_or_type: str, property_name: str) -> str:
+        """
+        生成标准化的向量索引名称（零配置设计）
+
+        规则：
+        1. 标签/类型名通过映射表简化或转小写
+        2. 移除属性名中的 _embedding 后缀
+        3. 格式：{label}_{property}_vector
+
+        Args:
+            label_or_type: 节点标签或关系类型（如 "OntologyClass", "PRD", "LINK"）
+            property_name: 属性名（如 "description_embedding", "name_embedding"）
+
+        Returns:
+            str: 标准化索引名（如 "ontology_description_vector"）
+
+        Examples:
+            >>> VectorIndexer.normalize_index_name("OntologyClass", "description_embedding")
+            "ontology_class_description_vector"
+            >>> VectorIndexer.normalize_index_name("PRD", "description_embedding")
+            "prd_description_vector"
+            >>> VectorIndexer.normalize_index_name("LINK", "description_embedding")
+            "link_description_vector"
+        """
+        # 1. 标签/类型名标准化映射（保留完整名称以匹配现有索引）
+        label_mapping = {
+            "OntologyClass": "ontology_class",  # ← 修改：保留完整名称匹配现有索引
+            "Ontology": "ontology",
+            "PRD": "prd",
+            "ReviewComment": "review",
+            "RiskAssessment": "risk",
+            "LINK": "link",
+            "INHERITANCE": "inheritance",
+            "ACTION": "action"
+        }
+
+        # 2. 获取标准化的标签名（未映射的转小写并转换为snake_case）
+        if label_or_type in label_mapping:
+            standardized_label = label_mapping[label_or_type]
+        else:
+            # 将 CamelCase 转换为 snake_case
+            import re
+            standardized_label = re.sub(r'(?<!^)(?=[A-Z])', '_', label_or_type).lower()
+
+        # 3. 移除属性名中的 _embedding 后缀
+        property_base = property_name.replace("_embedding", "")
+
+        # 4. 生成标准索引名
+        return f"{standardized_label}_{property_base}_vector"
+
     def create_vector_index(self, index_name: str, node_label: str, property_name: str) -> bool:
         """
         Create a vector index for nodes

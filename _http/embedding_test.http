@@ -1,0 +1,178 @@
+### Health Check - 验证服务状态
+GET http://localhost:8001/health
+
+###
+
+### 测试1: 为 OntologyClass 节点生成 description embedding
+# 场景：为 Flight-0.41 版本的本体类节点生成语义向量
+# 预期：成功生成并存储 embedding，自动创建向量索引
+POST http://localhost:8001/embedding/generate-and-store
+Content-Type: application/json
+
+{
+  "element_type": "node",
+  "node_label": "OntologyClass",
+  "source_property": "description",
+  "target_property": "description_embedding",
+  "filters": {
+    "version": "Flight-0.41"
+  }
+}
+
+###
+
+### 测试2: 为 Ontology 节点生成 name embedding
+# 场景：为 Flightv0_4 版本的本体节点生成名称向量
+POST http://localhost:8001/embedding/generate-and-store
+Content-Type: application/json
+
+{
+  "element_type": "node",
+  "node_label": "Ontology",
+  "source_property": "name",
+  "target_property": "name_embedding",
+  "filters": {
+    "version": "Flightv0_4"
+  }
+}
+
+###
+
+### 测试3: 为 PRD 节点生成 description embedding
+# 场景：为所有 PRD 需求文档生成描述向量（不使用过滤条件）
+POST http://localhost:8001/embedding/generate-and-store
+Content-Type: application/json
+
+{
+  "element_type": "node",
+  "node_label": "PRD",
+  "source_property": "description",
+  "target_property": "description_embedding"
+}
+
+###
+
+### 测试4: 为 ReviewComment 节点生成 content embedding
+# 场景：为评审意见生成内容向量
+POST http://localhost:8001/embedding/generate-and-store
+Content-Type: application/json
+
+{
+  "element_type": "node",
+  "node_label": "ReviewComment",
+  "source_property": "content",
+  "target_property": "content_embedding"
+}
+
+###
+
+### 测试5: 为 RiskAssessment 节点生成 impact embedding
+# 场景：为风险评估生成影响描述向量
+POST http://localhost:8001/embedding/generate-and-store
+Content-Type: application/json
+
+{
+  "element_type": "node",
+  "node_label": "RiskAssessment",
+  "source_property": "impact",
+  "target_property": "impact_embedding"
+}
+
+###
+
+### 测试6: 为 LINK 关系生成 description embedding
+# 场景：为 Flight-0.41 版本的 LINK 关系生成描述向量
+POST http://localhost:8001/embedding/generate-and-store
+Content-Type: application/json
+
+{
+  "element_type": "relationship",
+  "relationship_type": "LINK",
+  "source_property": "description",
+  "target_property": "description_embedding",
+  "filters": {
+    "version": "Flight-0.41"
+  }
+}
+
+###
+
+### 测试7: 为 INHERITANCE 关系生成 description embedding
+# 场景：为继承关系生成描述向量
+POST http://localhost:8001/embedding/generate-and-store
+Content-Type: application/json
+
+{
+  "element_type": "relationship",
+  "relationship_type": "INHERITANCE",
+  "source_property": "description",
+  "target_property": "description_embedding",
+  "filters": {
+    "version": "Flight-0.41"
+  }
+}
+
+###
+
+### 测试8: 为 ACTION 关系生成 description embedding
+# 场景：为动作关系生成描述向量
+POST http://localhost:8001/embedding/generate-and-store
+Content-Type: application/json
+
+{
+  "element_type": "relationship",
+  "relationship_type": "ACTION",
+  "source_property": "description",
+  "target_property": "description_embedding",
+  "filters": {
+    "version": "Flight-0.41"
+  }
+}
+
+###
+
+### 测试9: 单个文本 embedding 生成
+# 场景：为单个查询文本生成向量（用于即时查询）
+POST http://localhost:8001/embedding/generate
+Content-Type: application/json
+
+{
+  "text": "机场跑道管理和调度系统"
+}
+
+###
+
+### 测试10: 批量文本 embedding 生成
+# 场景：为多个查询文本批量生成向量
+POST http://localhost:8001/embedding/batch
+Content-Type: application/json
+
+{
+  "texts": [
+    "航班延误处理流程",
+    "登机口分配管理",
+    "停机位资源调度",
+    "A-CDM 协同决策系统",
+    "机场容量评估与优化"
+  ]
+}
+
+###
+
+### 测试11: 使用自定义批次大小生成 embedding
+# 场景：测试批处理参数（batch_size）
+POST http://localhost:8001/embedding/generate-and-store
+Content-Type: application/json
+
+{
+  "element_type": "node",
+  "node_label": "OntologyClass",
+  "source_property": "description",
+  "target_property": "description_embedding",
+  "batch_size": 10,
+  "filters": {
+    "version": "Flight-0.41"
+  }
+}
+
+###

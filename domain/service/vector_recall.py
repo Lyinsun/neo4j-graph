@@ -11,6 +11,7 @@ from typing import List, Dict, Any, Optional
 
 from infrastructure.persistence.neo4j.neo4j_client import Neo4jClient
 from infrastructure.service.embedding.embedding_service import EmbeddingService
+from domain.service.vector_indexer import VectorIndexer
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -201,15 +202,16 @@ class VectorRecallSystem:
         # Generate embedding for query
         query_embedding = self.embedding_service.generate_embedding(query_text)
 
-        # Map node types to their vector indexes
-        index_mapping = {
-            "Ontology": "ontology_name_vector",
-            "PRD": "prd_description_vector",
-            "ReviewComment": "review_content_vector",
-            "RiskAssessment": "risk_impact_vector"
-        }
+        # Auto-generate standardized index name (zero-config design)
+        # Always use description_embedding as the default property
+        property_name = 'description_embedding'
 
-        index_name = index_mapping.get(node_label, f"{node_label.lower()}_name_vector")
+        index_name = VectorIndexer.normalize_index_name(
+            label_or_type=node_label,
+            property_name=property_name
+        )
+
+        logger.info(f"Using vector index: {index_name}")
 
         # Build where clauses for filters
         where_clauses = []

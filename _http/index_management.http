@@ -1,0 +1,89 @@
+### Health Check - 验证服务状态
+GET http://localhost:8001/health
+
+###
+
+### 测试1: 查看所有向量索引
+GET http://localhost:8001/index/list
+
+###
+
+### 测试2: 创建 OntologyClass 向量索引
+POST http://localhost:8001/index/create
+Content-Type: application/json
+
+{
+  "index_name": "ontology_class_description_vector",
+  "node_label": "OntologyClass",
+  "property_name": "description_embedding"
+}
+
+###
+
+### 测试3: 创建 Ontology 向量索引（name属性）
+POST http://localhost:8001/index/create
+Content-Type: application/json
+
+{
+  "index_name": "ontology_name_vector",
+  "node_label": "Ontology",
+  "property_name": "name_embedding"
+}
+
+###
+
+### 测试4: 创建 PRD 向量索引
+POST http://localhost:8001/index/create
+Content-Type: application/json
+
+{
+  "index_name": "prd_description_vector",
+  "node_label": "PRD",
+  "property_name": "description_embedding"
+}
+
+###
+
+### 测试5: 创建 ReviewComment 向量索引
+POST http://localhost:8001/index/create
+Content-Type: application/json
+
+{
+  "index_name": "review_content_vector",
+  "node_label": "ReviewComment",
+  "property_name": "content_embedding"
+}
+
+###
+
+### 测试6: 创建 RiskAssessment 向量索引
+POST http://localhost:8001/index/create
+Content-Type: application/json
+
+{
+  "index_name": "risk_impact_vector",
+  "node_label": "RiskAssessment",
+  "property_name": "impact_embedding"
+}
+
+###
+
+### 测试7: 创建所有预定义索引
+POST http://localhost:8001/index/create-all
+
+###
+
+### 测试8: 删除 OntologyClass 向量索引
+DELETE http://localhost:8001/index/ontology_class_description_vector
+
+###
+
+### 测试9: 删除 Ontology 向量索引
+DELETE http://localhost:8001/index/ontology_name_vector
+
+###
+
+### 测试10: 删除 PRD 向量索引
+DELETE http://localhost:8001/index/prd_description_vector
+
+###

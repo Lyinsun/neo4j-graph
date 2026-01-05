@@ -4,6 +4,7 @@ FastAPI HTTP API for Vector Recall System
 Provides RESTful endpoints for vector-based search with filtering capabilities
 """
 import sys
+import logging
 from pathlib import Path
 
 # Add the project root to Python path
@@ -17,6 +18,10 @@ from domain.service.vector_recall import VectorRecallSystem
 from domain.service.vector_indexer import VectorIndexer
 from infrastructure.persistence.neo4j.neo4j_client import Neo4jClient
 from infrastructure.service.embedding.embedding_service import EmbeddingService
+
+# Initialize logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -56,6 +61,24 @@ def get_vector_indexer():
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to initialize vector indexer: {str(e)}")
     return _vector_indexer
+
+
+def check_index_exists(indexer: VectorIndexer, index_name: str) -> bool:
+    """
+    Check if a vector index exists
+
+    Args:
+        indexer: VectorIndexer instance
+        index_name: Name of the index to check
+
+    Returns:
+        bool: True if index exists, False otherwise
+    """
+    try:
+        indexes = indexer.list_vector_indexes()
+        return any(idx.get('name') == index_name for idx in indexes)
+    except Exception:
+        return False
 
 
 # Request models
@@ -164,6 +187,8 @@ class GenerateAndStoreEmbeddingResponse(BaseModel):
     processed_nodes: int
     failed_nodes: int
     embedding_dimension: int
+    index_created: bool = False  # 是否创建了向量索引
+    index_name: Optional[str] = None  # 创建的索引名称
 
 
 # Health check endpoint
@@ -497,14 +522,65 @@ async def generate_and_store_embeddings(request: GenerateAndStoreEmbeddingReques
         processed_elements = update_result[0]['updated_count'] if update_result else 0
         failed_elements = total_elements - processed_elements
 
-        # 5. Return results
+        # 5. Auto-create vector index if not exists
+        index_created = False
+        index_name = None
+
+        try:
+            # Auto-generate standardized index name using zero-config design
+            label_or_type = request.node_label or request.relationship_type
+
+            if label_or_type:
+                index_name = VectorIndexer.normalize_index_name(
+                    label_or_type=label_or_type,
+                    property_name=request.target_property
+                )
+            else:
+                index_name = None
+
+            # Get indexer
+            indexer = get_vector_indexer()
+
+            # Create index if it doesn't exist (only if we have a specific label/type)
+            if index_name and not check_index_exists(indexer, index_name):
+                logger.info(f"Auto-creating vector index: {index_name}")
+
+                # Create index based on element type
+                if request.element_type == "node":
+                    success = indexer.create_vector_index(
+                        index_name=index_name,
+                        node_label=request.node_label,
+                        property_name=request.target_property
+                    )
+                else:
+                    success = indexer.create_relationship_vector_index(
+                        index_name=index_name,
+                        relationship_type=request.relationship_type,
+                        property_name=request.target_property
+                    )
+
+                index_created = success
+                if success:
+                    logger.info(f"✓ Auto-created index: {index_name}")
+            elif index_name:
+                logger.info(f"Index already exists: {index_name}")
+            else:
+                logger.warning("Cannot create index without specific label/type")
+
+        except Exception as e:
+            logger.warning(f"Failed to create index (non-fatal): {e}")
+            # Index creation failure should not affect the main process
+
+        # 6. Return results
         return GenerateAndStoreEmbeddingResponse(
             success=True,
             message=f"Successfully generated and stored embeddings for {processed_elements}/{total_elements} {element_name} {request.element_type}s",
             total_nodes=total_elements,
             processed_nodes=processed_elements,
             failed_nodes=failed_elements,
-            embedding_dimension=len(embeddings[0]) if embeddings else 0
+            embedding_dimension=len(embeddings[0]) if embeddings else 0,
+            index_created=index_created,
+            index_name=index_name
         )
 
     except HTTPException:

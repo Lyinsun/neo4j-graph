@@ -1,0 +1,229 @@
+### Health Check - 验证服务状态
+GET http://localhost:8001/health
+
+###
+
+### 测试1: 知识库召回 - 机场跑道管理
+POST http://localhost:8001/recall/knowledge-base
+Content-Type: application/json
+
+{
+  "query_text": "机场跑道管理和调度",
+  "node_label": "OntologyClass",
+  "top_k": 5,
+  "filters": {
+    "version": "Flight-0.41"
+  }
+}
+
+###
+
+### 测试2: 知识库召回 - 航班延误处理
+POST http://localhost:8001/recall/knowledge-base
+Content-Type: application/json
+
+{
+  "query_text": "航班延误处理流程",
+  "node_label": "OntologyClass",
+  "top_k": 5,
+  "filters": {
+    "version": "Flight-0.41"
+  }
+}
+
+###
+
+### 测试3: 知识库召回 - 登机口分配
+POST http://localhost:8001/recall/knowledge-base
+Content-Type: application/json
+
+{
+  "query_text": "登机口分配和管理",
+  "node_label": "OntologyClass",
+  "top_k": 5,
+  "filters": {
+    "version": "Flight-0.41"
+  }
+}
+
+###
+
+### 测试4: 知识库召回 - A-CDM协同决策
+POST http://localhost:8001/recall/knowledge-base
+Content-Type: application/json
+
+{
+  "query_text": "机场协同决策系统 A-CDM",
+  "node_label": "OntologyClass",
+  "top_k": 5,
+  "filters": {
+    "version": "Flight-0.41"
+  }
+}
+
+###
+
+### 测试5: 知识库召回 - 停机位管理
+POST http://localhost:8001/recall/knowledge-base
+Content-Type: application/json
+
+{
+  "query_text": "停机位资源分配",
+  "node_label": "OntologyClass",
+  "top_k": 5,
+  "filters": {
+    "version": "Flight-0.41"
+  }
+}
+
+###
+
+### 测试6: 混合搜索 - 机场设施管理
+POST http://localhost:8001/recall/hybrid
+Content-Type: application/json
+
+{
+  "query_text": "机场设施资源管理",
+  "node_label": "OntologyClass",
+  "top_k": 10,
+  "filters": {
+    "version": "Flight-0.41"
+  }
+}
+
+###
+
+### 测试7: 混合搜索 - 航班计划
+POST http://localhost:8001/recall/hybrid
+Content-Type: application/json
+
+{
+  "query_text": "航班计划制定和调整",
+  "node_label": "OntologyClass",
+  "top_k": 10,
+  "filters": {
+    "version": "Flight-0.41"
+  }
+}
+
+###
+
+### 测试8: 知识库召回 - Top-K=3 测试
+POST http://localhost:8001/recall/knowledge-base
+Content-Type: application/json
+
+{
+  "query_text": "飞机起降管理",
+  "node_label": "OntologyClass",
+  "top_k": 3,
+  "filters": {
+    "version": "Flight-0.41"
+  }
+}
+
+###
+
+### 测试9: 知识库召回 - Top-K=10 测试
+POST http://localhost:8001/recall/knowledge-base
+Content-Type: application/json
+
+{
+  "query_text": "航班运行保障",
+  "node_label": "OntologyClass",
+  "top_k": 10,
+  "filters": {
+    "version": "Flight-0.41"
+  }
+}
+
+###
+
+### 测试10: 知识库召回 - 机场容量管理
+POST http://localhost:8001/recall/knowledge-base
+Content-Type: application/json
+
+{
+  "query_text": "机场容量评估和优化",
+  "node_label": "OntologyClass",
+  "top_k": 5,
+  "filters": {
+    "version": "Flight-0.41"
+  }
+}
+
+###
+
+### 测试11: 知识库召回 - 航空器类型
+POST http://localhost:8001/recall/knowledge-base
+Content-Type: application/json
+
+{
+  "query_text": "飞机机型和性能参数",
+  "node_label": "OntologyClass",
+  "top_k": 5,
+  "filters": {
+    "version": "Flight-0.41"
+  }
+}
+
+###
+
+### 测试12: 混合搜索 - 时间管理
+POST http://localhost:8001/recall/hybrid
+Content-Type: application/json
+
+{
+  "query_text": "航班时间管理和调度",
+  "node_label": "OntologyClass",
+  "top_k": 8,
+  "filters": {
+    "version": "Flight-0.41"
+  }
+}
+
+###
+
+### 测试13: 知识库召回 - 天气影响
+POST http://localhost:8001/recall/knowledge-base
+Content-Type: application/json
+
+{
+  "query_text": "天气对航班的影响",
+  "node_label": "OntologyClass",
+  "top_k": 5,
+  "filters": {
+    "version": "Flight-0.41"
+  }
+}
+
+###
+
+### 测试14: 知识库召回 - 旅客服务
+POST http://localhost:8001/recall/knowledge-base
+Content-Type: application/json
+
+{
+  "query_text": "旅客登机和服务流程",
+  "node_label": "OntologyClass",
+  "top_k": 5,
+  "filters": {
+    "version": "Flight-0.41"
+  }
+}
+
+###
+
+### 测试15: 混合搜索 - 全局搜索（高Top-K）
+POST http://localhost:8001/recall/hybrid
+Content-Type: application/json
+
+{
+  "query_text": "民航运输系统",
+  "node_label": "OntologyClass",
+  "top_k": 15,
+  "filters": {
+    "version": "Flight-0.41"
+  }
+}
+
+###
